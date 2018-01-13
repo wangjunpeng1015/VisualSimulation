@@ -1,0 +1,5 @@
+build/*.js
+config/*.js
+src/assets/js/leaflet-plugin/*.js
+src/assets/js/leaflet-plugin/lib/*.js
+src/assets/js/map/*.js
