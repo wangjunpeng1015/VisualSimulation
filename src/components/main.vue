@@ -1,6 +1,5 @@
 <template>
   <div class="">
-   <heade title="精细化战场电磁态势仿真"></heade>
    <menus title="平台功能区" @choosemenu="chooseMenu" :menus="menus"></menus>
    <!-- 表格 -->
    <div class="grid-box nav-box">
@@ -18,11 +17,9 @@
 </template>
 
 <script>
-import heade from '@/components/header'
 import menus from '@/components/nav'
 export default {
 	components: {
-		heade,
 		menus
 	},
 	data () {

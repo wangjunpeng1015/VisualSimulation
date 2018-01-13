@@ -1,11 +1,16 @@
 <template>
   <div id="app" v-cloak>
+    <heade title="精细化战场电磁态势仿真"></heade>
     <router-view/>
   </div>
 </template>
 
 <script>
+import heade from '@/components/header'
 export default {
+  components: {
+    heade
+  },
   name: 'app'
 }
 </script>
@@ -20,7 +25,7 @@ export default {
   }
   #app{
     background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
-  	>div{
+  	>div:not(.header){
   		height: 100%;
   	}
   }

@@ -48,13 +48,15 @@ export default {
     -webkit-text-fill-color:transparent;
   }
   .header{
-    height: 70px;
-    position:relative;
+    width:100%;
+    height: 80px;
+    position:fixed;
+    top:0;
     background:url(../assets/image/header/导航条.png) no-repeat 0 0/100% 100%;
     overflow:hidden;
     .title{
       @include fontColor;
-      margin-top: 16px;
+      margin-top: 25px;
       font-size: 24px;
       font-weight: bold;
       text-align:center;
@@ -63,7 +65,7 @@ export default {
       position:absolute;
       top:0;
       right:0;
-      height: 48px;
+      height: 58px;
       display: flex;
       align-items: center;
       >*:not(:first-child){

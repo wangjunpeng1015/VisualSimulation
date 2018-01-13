@@ -1,4 +1,17 @@
 /* input重置 */
+$color:#91FFFF;
 .ivu-input{
+	color:$color;
+}
+.ivu-form-item{
+	margin-bottom: 15px;
+}
+.ivu-checkbox-wrapper .ivu-checkbox-inner,.ivu-input{
 	background-color:transparent;
+}
+.ivu-checkbox-wrapper .ivu-checkbox-inner{
+	border-color:$color;
+}
+input::-webkit-input-placeholder{
+	color: rgba(145,255,255,0.5) !important;
 }
