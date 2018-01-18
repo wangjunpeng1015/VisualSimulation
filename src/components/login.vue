@@ -1,6 +1,28 @@
 <template>
   <div class="login">
     <div class="form-box">
+      <ul class="list">
+        <li class="list1" :class="{'active':index==1}">
+          <img src="../assets/image/login/完整的模型.png" alt="">
+          <img src="../assets/image/login/完整的模型line.png" alt="">
+        </li>
+        <li class="list2" :class="{'active':index==2}">
+          <img src="../assets/image/login/复杂群目标.png" alt="">
+          <img src="../assets/image/login/复杂群目标line.png" alt="">
+        </li>
+        <li class="list3" :class="{'active':index==3}">
+          <img src="../assets/image/login/灵活的任务line.png" alt="">
+          <img src="../assets/image/login/灵活的任务.png" alt="">
+        </li>
+        <li class="list4" :class="{'active':index==4}">
+          <img src="../assets/image/login/精细化战场line.png" alt="">
+          <img src="../assets/image/login/精细化战场.png" alt="">
+        </li>
+        <li class="list5" :class="{'active':index==5}">
+          <img src="../assets/image/login/友好的可视化line.png" alt="">
+          <img src="../assets/image/login/友好的可视化.png" alt="">
+        </li>
+      </ul>
       <div class="form">
         <h1>欢迎登陆仿真模拟系统</h1>
         <Form ref="user" :rules="ruleValidate" :model="user" >
@@ -34,6 +56,7 @@
     },
     data () {
       return {
+        index:1,
         checked:false,
         user:{
           UserName:'',
@@ -42,23 +65,29 @@
         ruleValidate:{
           UserName: [
               {
-                required: true, 
-                message: '请输入用户名！', 
-                trigger: 'blur' 
+                required: true,
+                message: '请输入用户名！',
+                trigger: 'blur'
               }
           ],
           Password: [
-              { 
-                required: true, 
-                message: '请输入要密码！', 
-                trigger: 'blur' 
+              {
+                required: true,
+                message: '请输入要密码！',
+                trigger: 'blur'
               }
           ],
         }
       }
     },
     mounted(){
-
+      setInterval(()=>{
+        if(this.index>5){
+          this.index = 1;
+        }else{
+          this.index++;
+        }
+      },3000)
     },
     methods:{
       /*登录*/
@@ -71,7 +100,7 @@
               console.log('登录成功')
               debugger
              });
-           } 
+           }
          })
       }
     }
@@ -97,6 +126,47 @@
     display:flex;
     align-items: center;
     background:url('../assets/image/login/bg.png') no-repeat 0 0/100% 100%;
+    .list{
+      li{
+        position: absolute;
+        opacity: .1;
+        transition: all linear 3s;
+        &.active{
+          opacity: 1;
+        }
+      }
+      .list1{
+        left: -505px;
+        top: -55px;
+        :first-child{
+          margin-bottom: 55px;
+        }
+      }
+      .list2{
+        left: -526px;
+        bottom: -55px;
+        :last-child{
+          margin-bottom: 110px;
+        }
+      }
+      .list3{
+        right: -506px;
+        top: -55px;
+      }
+      .list4{
+        right: -530px;
+        :first-child{
+          margin-bottom: 55px;
+        }
+      }
+      .list5{
+        right: -250px;
+        bottom:-160px;
+        :first-child{
+          margin-bottom: 55px;
+        }
+      }
+    }
     .form-box{
       display:flex;
       position:relative;
