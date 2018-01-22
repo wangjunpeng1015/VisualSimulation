@@ -2,6 +2,8 @@
   <div id="app" v-cloak>
     <heade title="精细化战场电磁态势仿真"></heade>
     <router-view/>
+    <!-- 地球 -->
+    <div id="map"></div>
   </div>
 </template>
 

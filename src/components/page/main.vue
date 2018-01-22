@@ -1,18 +1,22 @@
 <template>
   <div class="">
-   <menus title="平台功能区" @choosemenu="chooseMenu" :menus="menus"></menus>
-   <!-- 表格 -->
-   <div class="grid-box nav-box">
-		<div class="nav-head">
+  	<!-- nav导航 -->
+   <menus title="平台功能区" @choosemenu="chooseMenu" :menus="navs"></menus>
+   <!-- 数据列表 -->
+   <div class="grid-box">
+		<div class="grid-head">
 			<h3 class="title">数据列表</h3>
 		</div>
-		<div class="nav-containt">
+		<div class="grid-containt">
 			<Table stripe :data="gridData" :columns="gridColumn"></Table>
 		</div>
-
    </div>
    <!-- 时间轴 -->
    <div id="timeline"></div>
+   <!-- 菜单栏 -->
+   <div class="menu">
+   	<div class="menu-list" v-for="item in menus">{{item.name}}</div>
+   </div>
   </div>
 </template>
 
@@ -57,13 +61,19 @@ export default {
                date: '2016-10-01'
            },
 			],
-			/*菜单数据*/
-			menus:[
+			/*nav导航数据*/
+			navs:[
 				{name:'场景',icon:''},
 				{name:'目标',icon:''},
 				{name:'平台',icon:''},
 				{name:'航线',icon:''},
 				{name:'规则配置',icon:''}
+			],
+			/*右下角菜单数据*/
+			menus:[
+				{name:'综合态势',nm:'zhts'},
+				{name:'任务场景',nm:'rwcj'},
+				{name:'基础数据库',nm:'jcsjk'}
 			]
 		}
 	},
@@ -90,7 +100,9 @@ export default {
 				{id: 6, content: 'item 6', start: '2013-04-27'}
 			]);
 		  	// Configuration for the Timeline
-			let options = {};
+			let options = {
+				locale: moment.locale('zh-cn'),//中文化
+			};
 			// Create a Timeline
 			let timeline = new vis.Timeline(container, items, options);
 		}
@@ -100,9 +112,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-	.grid-box{
-		width: 
-	}
 	#timeline{
 		position: fixed;
 	    width: 100%;
@@ -112,5 +121,17 @@ export default {
 		position:fixed;
 		right:3%;
 		top:11%;
+	}
+	.menu{
+		width: 192px;
+		height: 196px;
+		cursor:pointer;
+		background: url('../../assets/image/menu/主菜单.png');
+		position: fixed;
+		right: 10%;
+		bottom: 10%;
+		.menu-list{
+			background: url('../../assets/image/menu/主菜单.png');
+		}
 	}
 </style>

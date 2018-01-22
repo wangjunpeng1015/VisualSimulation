@@ -3,6 +3,7 @@
     <heade title="可视化仿真模拟软件"></heade>
     <!-- 时间轴 -->
     <div id="timeline"></div>
+    <input type="text" :value="message">
      <p>{{message}}</p>
         <!-- 直接在模板中绑定表达式 -->
         <p>{{message.split('').reverse().join('')}}</p>

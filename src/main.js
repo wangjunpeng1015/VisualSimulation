@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 /*这里是“@”相当于“../” */
 import Vue from 'vue'
+import Vuex from 'vuex'
 import App from './App'
 import iview from 'iview'  //引入iview
 import router from './router/index'
@@ -15,6 +16,7 @@ import 'iview/dist/styles/iview.css'//引入iview的css文件
 import './assets/css/layout.scss'//引入布局的scss文件
 import './assets/css/reset.scss'//引入重置的scss文件
 Vue.use(iview)
+Vue.use(Vuex)
 
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
@@ -58,9 +60,10 @@ axios.interceptors.response.use((res) =>{
 // })
 
 /* eslint-disable no-new */
-new Vue({
+window.Vue = new Vue({
   el: '#app',
   router,
+  // store,
   template: '<App/>',
   components: { App }
 })

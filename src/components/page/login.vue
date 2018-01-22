@@ -3,24 +3,24 @@
     <div class="form-box">
       <ul class="list">
         <li class="list1" :class="{'active':index==1}">
-          <img src="../assets/image/login/完整的模型.png" alt="">
-          <img src="../assets/image/login/完整的模型line.png" alt="">
+          <img src="../../assets/image/login/完整的模型.png" alt="">
+          <img src="../../assets/image/login/完整的模型line.png" alt="">
         </li>
         <li class="list2" :class="{'active':index==2}">
-          <img src="../assets/image/login/复杂群目标.png" alt="">
-          <img src="../assets/image/login/复杂群目标line.png" alt="">
+          <img src="../../assets/image/login/复杂群目标.png" alt="">
+          <img src="../../assets/image/login/复杂群目标line.png" alt="">
         </li>
         <li class="list3" :class="{'active':index==3}">
-          <img src="../assets/image/login/灵活的任务line.png" alt="">
-          <img src="../assets/image/login/灵活的任务.png" alt="">
+          <img src="../../assets/image/login/灵活的任务line.png" alt="">
+          <img src="../../assets/image/login/灵活的任务.png" alt="">
         </li>
         <li class="list4" :class="{'active':index==4}">
-          <img src="../assets/image/login/精细化战场line.png" alt="">
-          <img src="../assets/image/login/精细化战场.png" alt="">
+          <img src="../../assets/image/login/精细化战场line.png" alt="">
+          <img src="../../assets/image/login/精细化战场.png" alt="">
         </li>
         <li class="list5" :class="{'active':index==5}">
-          <img src="../assets/image/login/友好的可视化line.png" alt="">
-          <img src="../assets/image/login/友好的可视化.png" alt="">
+          <img src="../../assets/image/login/友好的可视化line.png" alt="">
+          <img src="../../assets/image/login/友好的可视化.png" alt="">
         </li>
       </ul>
       <div class="form">
@@ -94,11 +94,10 @@
       submit(name){
         this.$refs[name].validate((valid) => {
            if(valid) {
-            console.log(this.user)
-            debugger
+             this.$store.state.userName = this.user.UserName;
              this.$http.post('/users',this.user).then(res=>{
-              console.log('登录成功')
-              debugger
+              //登录成功跳转主页
+              this.$router.push('/main');
              });
            }
          })
@@ -125,7 +124,7 @@
   .login{
     display:flex;
     align-items: center;
-    background:url('../assets/image/login/bg.png') no-repeat 0 0/100% 100%;
+    background:url('../../assets/image/login/bg.png') no-repeat 0 0/100% 100%;
     .list{
       li{
         position: absolute;
@@ -171,7 +170,7 @@
       display:flex;
       position:relative;
       align-items: center;
-      background:url('../assets/image/login/不转圆.png') no-repeat;
+      background:url('../../assets/image/login/不转圆.png') no-repeat;
       width:637px;
       height:626px;
       margin:0 auto;
@@ -184,7 +183,7 @@
         width:282px;
         height:564px;
         display:inline-block;
-        background:url('../assets/image/login/转圆2.png');
+        background:url('../../assets/image/login/转圆2.png');
       }
       &:after{
         content:'';
@@ -196,7 +195,7 @@
         width:472px;
         height:432px;
         display:inline-block;
-        background:url('../assets/image/login/转圆1.png');
+        background:url('../../assets/image/login/转圆1.png');
       }
       .form{
         margin:0 auto;
@@ -209,7 +208,7 @@
             border:none;
             width:153px;
             height:50px;
-            background:url('../assets/image/login/登录按钮.png');
+            background:url('../../assets/image/login/登录按钮.png');
           }
         }
         h1{
@@ -229,7 +228,7 @@
       }
       .ivu-input-wrapper{
         height: 52px;
-        background:url("../assets/image/login/登录框.png") no-repeat;
+        background:url("../../assets/image/login/登录框.png") no-repeat;
         .ivu-input-group-append, .ivu-input-group-prepend{
           border:none;
         }

@@ -15,19 +15,18 @@ export default new Router({
       path: '/',
       name: 'login',
       redirect: '/login'
-      // component: resolve => require(['@/components/login.vue'], resolve) 
     },
     /*登录页面*/
     {
       path: '/login',
       name: 'login',
-      component: resolve => require(['@/components/login.vue'], resolve) 
+      component: resolve => require(['@/components/page/login.vue'], resolve) 
     },
     /*主页面*/
     {
       path: '/main',
       name: 'main',
-      component: resolve => require(['@/components/main.vue'], resolve) 
+      component: resolve => require(['@/components/page/main.vue'], resolve) 
     }
   ]
 })
