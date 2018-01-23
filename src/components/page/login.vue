@@ -122,6 +122,7 @@
     100%{transform:rotate(-360deg)}
   }
   .login{
+    height:100%;
     display:flex;
     align-items: center;
     background:url('../../assets/image/login/bg.png') no-repeat 0 0/100% 100%;

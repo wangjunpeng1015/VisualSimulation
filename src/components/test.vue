@@ -33,11 +33,16 @@ export default {
 	   }
 	},
 	mounted(){
-		this.init();
+		// this.init();
+		this.map();
 	},
 	methods:{
 		init(){
 			this.initTimeLine();
+		},
+		map(){
+			// mainmap.initMap(document.getElementById('map'));
+			
 		},
 		initTimeLine(){
 			let container = document.getElementById('timeline');

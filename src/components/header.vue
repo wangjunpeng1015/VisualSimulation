@@ -52,6 +52,7 @@ export default {
     height: 80px;
     position:fixed;
     top:0;
+    z-index: 100;
     background:url(../assets/image/header/导航条.png) no-repeat 0 0/100% 100%;
     overflow:hidden;
     .title{

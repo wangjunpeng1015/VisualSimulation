@@ -9,7 +9,7 @@ import router from './router/index'
 import qs from 'qs'
 import axios from 'axios'
 import _ from 'lodash' //引入数据操作处理js
-const config = require('../static/js/config')//引入配置文件
+const config = require('../static/config')//引入配置文件
 /*引用CSS样式*/
 import 'iview/dist/styles/iview.css'//引入iview的css文件
 // import 'vis/dist/vis.min.css'//引入vis的css文件
