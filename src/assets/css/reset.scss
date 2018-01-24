@@ -15,3 +15,31 @@ $color:#91FFFF;
 input::-webkit-input-placeholder{
 	color: rgba(145,255,255,0.5) !important;
 }
+/* 表格重置 */
+.ivu-table-wrapper{
+	border:none;
+	.ivu-table{
+		background-color: transparent;
+		th,td{
+			border:none;
+			background-color: transparent;
+		}
+		.ivu-table-header{
+			thead{
+
+			}
+		}
+		.ivu-table-tbody tr:nth-child(2n) td{
+			background-color: rgba(33,55,55,.5);
+		}
+		.ivu-table-row.ivu-table-row-hover td{
+			background-color: rgba(80,105,105,.5);
+		}
+		&:after{
+			width: 0;
+		}
+		&:before{
+			height: 0;
+		}
+	}
+}

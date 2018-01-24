@@ -3,7 +3,7 @@
     <p class="title">{{title}}</p>
     <div class="userInfo layout-row">
       <Avatar icon="person"/>
-      <span>{{userName}}</span>
+      <span>{{username}}</span>
       <span>{{time}}</span>
       <div class="layout-column">
         <span>星期{{week}}</span>
@@ -14,15 +14,20 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 let getTime;
 export default {
   data () {
     return {
-      userName:'赵武',
+      // userName:'赵武',
       time:moment(new Date).format('HH:mm:ss'),
       week:'天',
       date:'2018/01/11'
     }
+  },
+  computed:{
+    //将store中的变量映射到当前this避免每次写很长的$store.state.这种
+    ...mapState(['username'])
   },
   props:['title'],
   mounted(){

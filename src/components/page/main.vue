@@ -1,65 +1,65 @@
 <template>
   <div class="">
   	<!-- nav导航 -->
-   <menus title="平台功能区" @choosemenu="chooseMenu" :menus="navs"></menus>
+   <menus title="平台功能区" @choosenav="chooseNav" :menus="navs"></menus>
    <!-- 数据列表 -->
-   <div class="grid-box">
-		<div class="grid-head">
+   <div class="grid-box nav-box">
+		<div class="grid-head nav-head">
 			<h3 class="title">数据列表</h3>
 		</div>
-		<div class="grid-containt">
+		<div class="grid-containt nav-containt">
 			<Table stripe :data="gridData" :columns="gridColumn"></Table>
 		</div>
    </div>
    <!-- 时间轴 -->
    <div id="timeline"></div>
    <!-- 菜单栏 -->
-   <div class="menu">
-   	<div class="menu-list" v-for="item in menus">{{item.name}}</div>
-   </div>
+   <menulist :menus='menuList' @choosemenu="chooseMenu"></menulist>
   </div>
 </template>
 
 <script>
 import menus from '@/components/nav'
+import menulist from '@/components/menu'
 export default {
 	components: {
-		menus
+		menus,
+		menulist
 	},
 	data () {
 		return {
 			/*数据列表数据*/
 			gridColumn:[
-				{
-                 title: '名称',
-                 key: 'name'
-             },
-             {
-                 title: '时间',
-                 key: 'date'
-             },
-             {
-                 title: '内容',
-                 key: 'content'
-             }
+					{
+	                 title: '名称',
+	                 key: 'name'
+	             },
+	             {
+	                 title: '时间',
+	                 key: 'date'
+	             },
+	             {
+	                 title: '内容',
+	                 key: 'content'
+	             }
 			],
 			gridData:[
-				{
-               name: 'John Brown',
-               age: 18,
-               content: 'New York No. 1 Lake Park',
-               date: '2016-10-03'
-           },{
-               name: 'Jim Green',
-               age: 24,
-               content: 'Ottawa No. 2 Lake Park',
-               date: '2016-10-01'
-           },{
-               name: '内容',
-               age: 24,
-               content: '我是内容1',
-               date: '2016-10-01'
-           },
+					{
+	               name: 'John Brown',
+	               age: 18,
+	               content: 'New York No. 1 Lake Park',
+	               date: '2016-10-03'
+	           },{
+	               name: 'Jim Green',
+	               age: 24,
+	               content: 'Ottawa No. 2 Lake Park',
+	               date: '2016-10-01'
+	           },{
+	               name: '内容',
+	               age: 24,
+	               content: '我是内容1',
+	               date: '2016-10-01'
+	           }
 			],
 			/*nav导航数据*/
 			navs:[
@@ -70,12 +70,14 @@ export default {
 				{name:'规则配置',icon:''}
 			],
 			/*右下角菜单数据*/
-			menus:[
+			menuList:[
 				{name:'综合态势',nm:'zhts'},
 				{name:'任务场景',nm:'rwcj'},
 				{name:'基础数据库',nm:'jcsjk'}
 			]
 		}
+	},
+	created(){
 	},
 	mounted(){
 		this.init();
@@ -84,8 +86,13 @@ export default {
 		init(){
 			this.initTimeLine();
 		},
+		/*选择导航*/
+		chooseNav(name){
+			alert(name)
+		},
 		/*选择菜单*/
 		chooseMenu(name){
+			alert(name)
 		},
 		/*时间轴初始化*/
 		initTimeLine(){
@@ -111,7 +118,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang='scss' scoped>
 	#timeline{
 		position: fixed;
 	    width: 100%;
@@ -121,17 +128,12 @@ export default {
 		position:fixed;
 		right:3%;
 		top:11%;
-	}
-	.menu{
-		width: 192px;
-		height: 196px;
-		cursor:pointer;
-		background: url('../../assets/image/menu/主菜单.png');
-		position: fixed;
-		right: 10%;
-		bottom: 10%;
-		.menu-list{
-			background: url('../../assets/image/menu/主菜单.png');
+		width: 450px;
+		.grid-head{
+			background:url('../../assets/image/img/gridhead.png') no-repeat 0 0/100% 100%;
+		}
+		.grid-containt{
+			padding: 5px 20px;
 		}
 	}
 </style>
