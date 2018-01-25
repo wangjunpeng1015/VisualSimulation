@@ -38,7 +38,7 @@ export default {
 	.nav-box{
 		position: fixed;
 		left: 3%;
-		top: 10%;
+		top: 25%;
 		width:246px;
 	}
 	

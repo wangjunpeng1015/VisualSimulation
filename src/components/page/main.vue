@@ -128,7 +128,7 @@ export default {
 		position:fixed;
 		right:3%;
 		top:11%;
-		width: 450px;
+		width: 350px;
 		.grid-head{
 			background:url('../../assets/image/img/gridhead.png') no-repeat 0 0/100% 100%;
 		}

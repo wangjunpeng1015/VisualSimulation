@@ -18,27 +18,11 @@ export default {
   },
   mounted(){
     // this.init();
-    // this.map();
+    this.initmap();
   },
   methods:{
-    map(){
-      var map = new ol.Map({
-      layers: [
-        new ol.layer.Tile({
-          source: new ol.source.OSM()
-        })
-      ],
-      target: 'map',
-      controls: ol.control.defaults({
-        attributionOptions: {
-          collapsible: false
-        }
-      }),
-      view: new ol.View({
-        center: [0, 0],
-        zoom: 2
-      })
-    });
+    initmap(){
+      window.mainmap = mainmap.initMap('map');
     }
   }
 }
@@ -53,7 +37,7 @@ export default {
     display: none;
   }
   #app{
-    background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
+    // background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
   	>div:nth-child(2){
       position: relative;
       z-index: 99;
