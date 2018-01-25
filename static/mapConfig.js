@@ -94,13 +94,11 @@ function initMap(id){
           }
         }
         // tell OpenLayers to continue the animation
-        viewer.render();
+        map.render();
       };
 
       flightsSource = new ol.source.Vector({
         wrapX: false,
-        attributions: 'Flight data by ' +
-              '<a href="http://openflights.org/data.html">OpenFlights</a>,',
         loader: function() {
             var flightsData = [[[43.449928,39.956589],[55.606186,49.278728]],[[55.34,52.06],[45.034689,39.170539]]];
             for (var i = 0; i < flightsData.length; i++) {
@@ -124,15 +122,13 @@ function initMap(id){
                 addLater(feature, i * 50);
               }
             }
-            viewer.on('postcompose', animateFlights);
+            map.on('postcompose', animateFlights);
         }
       });
 
       var flightsLayer = new ol.layer.Vector({
         source: flightsSource,
         style: function(feature) {
-          // if the animation is still active for a feature, do not
-          // render the feature with the layer style
           if (feature.get('finished')) {
             return style;
           } else {
@@ -140,7 +136,7 @@ function initMap(id){
           }
         }
       });
-      viewer.addLayer(flightsLayer);
+      map.addLayer(flightsLayer);
     },
     /*画光圈——数组*/
     drawAperture(dataArry){
@@ -151,12 +147,15 @@ function initMap(id){
         source: source
       });
       map.addLayer(vector);
-      debugger
-      var geom = new ol.geom.Point(ol.proj.transform(dataArry,
-          'EPSG:4326', 'EPSG:3857'));
-      var feature = new ol.Feature(geom);
-      source.addFeature(feature);
 
+      function addRandomFeature() {
+        var geom = new ol.geom.Point(ol.proj.transform([90, 38],
+            'EPSG:4326', 'EPSG:3857'));
+        var feature = new ol.Feature(geom);
+        source.addFeature(feature);
+      }
+
+      var duration = 3000;
       function flash(feature) {
         var start = new Date().getTime();
         var listenerKey;
@@ -180,6 +179,7 @@ function initMap(id){
               })
             })
           });
+
           vectorContext.setStyle(style);
           vectorContext.drawGeometry(flashGeom);
           if (elapsed > duration) {
@@ -192,10 +192,10 @@ function initMap(id){
       }
 
       source.on('addfeature', function(e) {
-        debugger
         flash(e.feature);
       });
 
+      window.setInterval(addRandomFeature, 1000);
     }
   }
   return objInstance;
