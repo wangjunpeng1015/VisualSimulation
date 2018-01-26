@@ -8,21 +8,25 @@
 </template>
 
 <script>
-import mainmap from '../static/mapConfig'
+import maps from '../static/mapConfig'
 import heade from '@/components/header'
 export default {
   components: {
     heade
   },
+  beforeCreate(){
+    
+  },
   created(){
+
   },
   mounted(){
+    window.mainmap = maps.initMap('map');
     // this.init();
-    this.initmap();
+    // this.initmap();
   },
   methods:{
     initmap(){
-      window.mainmap = mainmap.initMap('map');
     }
   }
 }
@@ -49,5 +53,10 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
+    .custom-mouse-position{
+      top: 8px;
+      right: 20%;
+      position: absolute;
+    }
   }
 </style>

@@ -23,26 +23,57 @@
           <img src="../../assets/image/login/友好的可视化.png" alt="">
         </li>
       </ul>
-      <div class="form">
+      <!-- 登录 -->
+      <div class="form" v-if="!regist">
         <h1>欢迎登陆仿真模拟系统</h1>
         <Form ref="user" :rules="ruleValidate" :model="user" >
-          <FormItem  prop="name">
-              <Input name="name" v-model="user.UserName" placeholder="账号">
+          <FormItem  prop="UserName">
+              <Input name="UserName" v-model="user.UserName" placeholder="账号">
               <span slot="prepend">
                 <Icon type="android-person" size="24"></Icon>
               </span>
               </Input>
           </FormItem>
-          <FormItem prop="password">
-              <Input name="password" v-model="user.Password" placeholder="密码">
+          <FormItem prop="Password">
+              <Input name="Password" v-model="user.Password" placeholder="密码">
               <span slot="prepend">
                 <Icon type="ios-locked" size="24"></Icon>
               </span>
               </Input>
           </FormItem>
-          <Checkbox v-model="checked">记住密码</Checkbox>
+          <div class="middle layout-row">
+            <Checkbox v-model="checked">记住密码</Checkbox>
+            <p @click="registered">立即注册</p>
+          </div>
           <div class="buttons">
             <Button @click="submit('user')"></Button>
+          </div>
+        </Form>
+      </div>
+      <!-- 注册 -->
+      <div class="form" v-if="regist">
+        <h1>欢迎注册仿真模拟系统</h1>
+        <Form ref="reg" :rules="regruleValidate" :model="reg" >
+          <FormItem prop="regName">
+            <Input name="regName" v-model="reg.UserName" placeholder="账号"></Input>
+          </FormItem>
+          <FormItem prop="Password">
+            <Input name="Password" v-model="reg.Password" placeholder="密码"></Input>
+          </FormItem>
+          <FormItem prop="Password">
+            <Input name="Password" v-model="reg.Password" placeholder="确认密码"></Input>
+          </FormItem>
+          <FormItem prop="Password">
+            <Input name="Password" v-model="reg.Password" placeholder="手机号"></Input>
+          </FormItem>
+          <FormItem label="Radio">
+            <RadioGroup v-model="formItem.radio">
+              <Radio label="male">男</Radio>
+              <Radio label="female">女</Radio>
+            </RadioGroup>
+          </FormItem>
+          <div class="buttons">
+            <Button @click="registered('user')"></Button>
           </div>
         </Form>
       </div>
@@ -56,6 +87,7 @@
     },
     data () {
       return {
+        regist:false,//判断登录注册
         index:1,
         checked:false,
         user:{
@@ -73,7 +105,7 @@
           Password: [
               {
                 required: true,
-                message: '请输入要密码！',
+                message: '请输入密码！',
                 trigger: 'blur'
               }
           ],
@@ -94,6 +126,7 @@
       submit(name){
         this.$refs[name].validate((valid) => {
            if(valid) {
+             this.regist = false;
              this.$store.state.userName = this.user.UserName;
              this.$http.post('/users',this.user).then(res=>{
               //登录成功跳转主页
@@ -101,6 +134,10 @@
              });
            }
          })
+      },
+      /*注册*/
+      registered(name){
+        this.regist = true;
       }
     }
   }
@@ -201,6 +238,7 @@
       .form{
         margin:0 auto;
         width:300px;
+        z-index:3;
         .buttons{
           margin-top: 15px;
           text-align:center;
@@ -210,6 +248,13 @@
             width:153px;
             height:50px;
             background:url('../../assets/image/login/登录按钮.png');
+          }
+        }
+        .middle{
+          justify-content: space-between;
+          p{
+            font-size:12px;
+            cursor:pointer;
           }
         }
         h1{

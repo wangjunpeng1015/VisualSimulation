@@ -1,6 +1,18 @@
 const config = require('../static/config')//引入配置文件
-let map
 function initMap(id){
+  let view = new ol.View({   // 视图
+    center:ol.proj.transform([104.06667, 30.66667], 'EPSG:4326', 'EPSG:3857'),// 设置地图中心坐标点
+    zoom:3,
+    // extent:[-180,180,-90,90]  
+  });
+
+  //鼠标经纬度
+  let mouse = new ol.control.MousePosition({
+    coordinateFormat: ol.coordinate.createStringXY(4),
+    projection: 'EPSG:4326',
+    // className: 'custom-mouse-position',  
+  })
+  
   var newmap = function(id){
     let map =  new ol.Map({
         target: id,// DOM中地图容器的id 
@@ -22,34 +34,27 @@ function initMap(id){
                   imagerySet: 'Aerial'
               })
           }),
-        ], // 图层可以在地图初始化一起进行初始化也可以后期通过addLayer方法进行添加
+        ],// 图层可以在地图初始化一起进行初始化也可以后期通过addLayer方法进行添加
         controls: ol.control.defaults().extend([
-          new ol.control.MousePosition({
-            coordinateFormat: ol.coordinate.createStringXY(4),
-            projection: 'EPSG:4326',
-            // className: 'custom-mouse-position',  
-            // target: document.getElementById('mouse-position'),  
-          })
+          mouse//鼠标经纬度
         ]),
-        view:new ol.View({   // 视图
-          center:ol.proj.transform([104.06667, 30.66667], 'EPSG:4326', 'EPSG:3857'),// 设置地图中心坐标点
-          zoom:6
-          // extent:[mapExtent[1]-0.0001,mapExtent[0]-0.0001,mapExtent[3]+0.0001,mapExtent[2]+0.0001]  
-        }),
+        view:view
     });
     map.on('pointermove', function (e) {
-            let a=ol.proj.transform(e.pixel, 'EPSG:3857', 'EPSG:4326')
-            console.log(a)
-     //         var pixel = new ol.Pixel(e.xy.x,e.xy.y);
-     //         var lonlat = map.getLonLatFromPixel(pixel);
-     //         lonlat.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326")); //由900913坐标系转为4326
-     // 　　　 console.log(lonlat.lon+", "+lonlat.lat);
+      let position = mouse.v.split(',');
+      objInstance.position = {
+        lon:position[0],//经度
+        lat:position[1]//纬度
+      }
      })
     return map;
   }
   var map = newmap(id);
-  
-  objInstance={
+  /*坐标转换*/
+  function formatLonLat(array){
+    return ol.proj.transform([array[0], array[1]], 'EPSG:4326', 'EPSG:3857');
+  };
+  var objInstance = {
     /*画动线条*/
     drawAnimateLine(data){
       var style = new ol.style.Style({
@@ -100,7 +105,10 @@ function initMap(id){
       flightsSource = new ol.source.Vector({
         wrapX: false,
         loader: function() {
-            var flightsData = [[[43.449928,39.956589],[55.606186,49.278728]],[[55.34,52.06],[45.034689,39.170539]]];
+            var flightsData = [
+              [[43.449928,39.956589],[55.606186,49.278728],[66.606186,50.278728]],
+              [[55.34,52.06],[45.034689,39.170539],[60.034689,50.170539]]
+            ];
             for (var i = 0; i < flightsData.length; i++) {
               var flight = flightsData[i];
               var from = flight[0];
@@ -183,8 +191,10 @@ function initMap(id){
           vectorContext.setStyle(style);
           vectorContext.drawGeometry(flashGeom);
           if (elapsed > duration) {
-            ol.Observable.unByKey(listenerKey);
-            return;
+            ol.Observable.unByKey(listenerKey);//移除监听事件
+            //循环播放
+            addRandomFeature();
+            return ;
           }
           map.render();
         }
@@ -194,9 +204,66 @@ function initMap(id){
       source.on('addfeature', function(e) {
         flash(e.feature);
       });
+      addRandomFeature();
+    },
+    /*画飞机移动*/
+    DrawAirplan(){
+      var headOuterImageStyle = new ol.style.Style({
+         image: new ol.style.Circle({
+            radius: 7,
+            snapToPixel: false,
+            fill: new ol.style.Fill({color: 'red'}),
+            stroke: new ol.style.Stroke({
+              color: 'white', width: 2
+            })
+          })
+      });
 
-      window.setInterval(addRandomFeature, 1000);
-    }
+      var n = 1;
+      var omegaTheta = 30000; // Rotation period in ms
+      var R = 100;
+      var r = 100;
+      var p = 2e6;
+      map.on('postcompose', function(event) {
+        var vectorContext = event.vectorContext;
+        var frameState = event.frameState;
+        var theta = 2 * Math.PI * frameState.time / omegaTheta;
+        var coordinates = [];
+        var i;
+        for (i = 0; i < n; ++i) {
+          var t = theta + 2 * Math.PI * i / n;
+          var x = (R + r) * Math.cos(t) + p * Math.cos((R + r) * t / r);
+          var y = (R + r) * Math.sin(t) + p * Math.sin((R + r) * t / r);
+          coordinates.push([x, y]);
+        }
+        vectorContext.drawGeometry(new ol.geom.MultiPoint(coordinates));
+
+        var headPoint = new ol.geom.Point(coordinates[coordinates.length - 1]);
+        var feature = new ol.Feature(headPoint);
+        vectorContext.drawFeature(feature,headOuterImageStyle);
+
+        map.render();
+      });
+      map.render();
+    },
+    /*地图飞到某点*/
+    mapFly(position,callback){
+      callback = callback?callback:new function(){};
+      var duration = 2000;
+      var zoom = view.getZoom();
+      view.animate({
+        center: position,
+        duration: duration
+      }, callback);
+      view.animate({
+        zoom: zoom - 1,
+        duration: duration / 2
+      }, {
+        zoom: zoom,
+        duration: duration / 2
+      }, callback);
+    },
+    position:{}//返回经纬度
   }
   return objInstance;
 }

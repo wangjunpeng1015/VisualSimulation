@@ -2,6 +2,7 @@
   <div class="header">
     <p class="title">{{title}}</p>
     <div class="userInfo layout-row">
+      <p>经度：{{position.lon}} 纬度：{{position.lat}}</p>
       <Avatar icon="person"/>
       <span>{{username}}</span>
       <span>{{time}}</span>
@@ -22,7 +23,11 @@ export default {
       // userName:'赵武',
       time:moment(new Date).format('HH:mm:ss'),
       week:'天',
-      date:'2018/01/11'
+      date:'2018/01/11',
+      position:{
+        lon:'',
+        lat:''
+      }
     }
   },
   computed:{
@@ -33,6 +38,7 @@ export default {
   mounted(){
     getTime = setInterval(()=>{
       this.showTime();
+      this.position = window.mainmap.position
     },1000)
   },
   methods:{
