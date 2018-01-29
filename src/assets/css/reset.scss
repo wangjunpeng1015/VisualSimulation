@@ -1,6 +1,9 @@
 /* input重置 */
 $color:#91FFFF;
 .ivu-input{
+	&:focus{
+		box-shadow:none;
+	}
 	color:$color;
 }
 .ivu-form-item{
@@ -17,8 +20,11 @@ input::-webkit-input-placeholder{
 }
 /* 表格重置 */
 .ivu-table-wrapper{
-	border:none;
+	border:1px solid #3a595c;
 	.ivu-table{
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
 		background-color: transparent;
 		th,td{
 			border:none;
@@ -29,8 +35,14 @@ input::-webkit-input-placeholder{
 
 			}
 		}
-		.ivu-table-tbody tr:nth-child(2n) td{
-			background-color: rgba(33,55,55,.5);
+
+		.ivu-table-tbody{
+			tr:nth-child(2n) td{
+				background-color: rgba(33,55,55,.5);
+			}
+		}
+		.ivu-table-body{
+			flex:1;
 		}
 		.ivu-table-row.ivu-table-row-hover td{
 			background-color: rgba(80,105,105,.5);
@@ -40,6 +52,18 @@ input::-webkit-input-placeholder{
 		}
 		&:before{
 			height: 0;
+		}
+	}
+}
+/* 按钮重置 */
+button{
+	&.btn{
+	    padding-top: 16px;
+		border:none;
+		background:url('../../../static/image/button.png') no-repeat 0 0/100% 100%;
+		&:hover{
+			background-color:transparent;
+			background:url('../../../static/image/buttonHover.png') no-repeat 0 0/100% 100%;
 		}
 	}
 }

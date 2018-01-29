@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <div class="form-box">
+    <div class="form-box" :class="{'regist':regist}">
       <ul class="list">
         <li class="list1" :class="{'active':index==1}">
           <img src="../../assets/image/login/完整的模型.png" alt="">
@@ -23,60 +23,62 @@
           <img src="../../assets/image/login/友好的可视化.png" alt="">
         </li>
       </ul>
-      <!-- 登录 -->
-      <div class="form" v-if="!regist">
-        <h1>欢迎登陆仿真模拟系统</h1>
-        <Form ref="user" :rules="ruleValidate" :model="user" >
-          <FormItem  prop="UserName">
-              <Input name="UserName" v-model="user.UserName" placeholder="账号">
-              <span slot="prepend">
-                <Icon type="android-person" size="24"></Icon>
-              </span>
-              </Input>
-          </FormItem>
-          <FormItem prop="Password">
-              <Input name="Password" v-model="user.Password" placeholder="密码">
-              <span slot="prepend">
-                <Icon type="ios-locked" size="24"></Icon>
-              </span>
-              </Input>
-          </FormItem>
-          <div class="middle layout-row">
-            <Checkbox v-model="checked">记住密码</Checkbox>
-            <p @click="registered">立即注册</p>
-          </div>
-          <div class="buttons">
-            <Button @click="submit('user')"></Button>
-          </div>
-        </Form>
-      </div>
-      <!-- 注册 -->
-      <div class="form" v-if="regist">
-        <h1>欢迎注册仿真模拟系统</h1>
-        <Form ref="reg" :rules="regruleValidate" :model="reg" >
-          <FormItem prop="regName">
-            <Input name="regName" v-model="reg.UserName" placeholder="账号"></Input>
-          </FormItem>
-          <FormItem prop="Password">
-            <Input name="Password" v-model="reg.Password" placeholder="密码"></Input>
-          </FormItem>
-          <FormItem prop="Password">
-            <Input name="Password" v-model="reg.Password" placeholder="确认密码"></Input>
-          </FormItem>
-          <FormItem prop="Password">
-            <Input name="Password" v-model="reg.Password" placeholder="手机号"></Input>
-          </FormItem>
-          <FormItem label="Radio">
-            <RadioGroup v-model="formItem.radio">
-              <Radio label="male">男</Radio>
-              <Radio label="female">女</Radio>
-            </RadioGroup>
-          </FormItem>
-          <div class="buttons">
-            <Button @click="registered('user')"></Button>
-          </div>
-        </Form>
-      </div>
+      <transition name="fade">
+        <!-- 登录 -->
+        <div class="form" v-if="!regist">
+          <h1>欢迎登陆仿真模拟系统</h1>
+          <Form ref="user" :rules="ruleValidate" :model="user" >
+            <FormItem  prop="UserName">
+                <Input name="UserName" v-model="user.UserName" placeholder="账号">
+                <span slot="prepend">
+                  <Icon type="android-person" size="24"></Icon>
+                </span>
+                </Input>
+            </FormItem>
+            <FormItem prop="Password">
+                <Input name="Password" v-model="user.Password" placeholder="密码">
+                <span slot="prepend">
+                  <Icon type="ios-locked" size="24"></Icon>
+                </span>
+                </Input>
+            </FormItem>
+            <div class="middle layout-row">
+              <Checkbox v-model="checked">记住密码</Checkbox>
+              <p @click="registered">立即注册</p>
+            </div>
+            <div class="buttons">
+              <Button @click="submit('user')"></Button>
+            </div>
+          </Form>
+        </div>
+        <!-- 注册 -->
+        <div class="form" v-if="regist">
+          <h1>欢迎注册仿真模拟系统</h1>
+          <Form ref="reg" :rules="regruleValidate" :model="reg" >
+            <FormItem prop="UserName">
+              <Input v-model="reg.UserName" placeholder="账号"></Input>
+            </FormItem>
+            <FormItem prop="Password">
+              <Input v-model="reg.Password" placeholder="密码"></Input>
+            </FormItem>
+            <FormItem prop="rePassword">
+              <Input v-model="reg.rePassword" placeholder="确认密码"></Input>
+            </FormItem>
+            <FormItem prop="phone">
+              <Input v-model="reg.phone" placeholder="手机号"></Input>
+            </FormItem>
+            <FormItem label="">
+              <RadioGroup v-model="reg.sex">
+                <Radio label="male">男</Radio>
+                <Radio label="female">女</Radio>
+              </RadioGroup>
+            </FormItem>
+            <div class="buttons">
+              <Button @click="registered('user')"></Button>
+            </div>
+          </Form>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -109,6 +111,36 @@
                 trigger: 'blur'
               }
           ],
+        },
+        reg:{
+          UserName:'',
+          Password:'',
+          rePassword:'',
+          phone:'',
+          sex:'male'
+        },
+        regruleValidate:{
+          UserName: [
+            {
+              required: true,
+              message: '请输入用户名！',
+              trigger: 'blur'
+            }
+          ],
+          Password: [
+            {
+              required: true,
+              message: '请输入密码！',
+              trigger: 'blur'
+            }
+          ],
+          rePassword: [
+            {
+              required: true,
+              message: '请确认密码！',
+              trigger: 'blur'
+            }
+          ]
         }
       }
     },
@@ -157,6 +189,17 @@
     50%{transform:rotate(-180deg)}
     750%{transform:rotate(-270deg)}
     100%{transform:rotate(-360deg)}
+  }
+  /* 切换动画效果 */
+  .fade-enter-active {
+    transition: all .3s ease;
+  }
+  .fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .fade-enter, .fade-leave-active {
+    padding-left: 20px;
+    opacity: 0;
   }
   .login{
     height:100%;
@@ -212,6 +255,11 @@
       width:637px;
       height:626px;
       margin:0 auto;
+      &.regist{
+        background:url('../../assets/image/login/不转圆1.png') no-repeat;
+        width:797px;
+        height:781px;
+      }
       &:before{
         content:'';
         position: absolute;

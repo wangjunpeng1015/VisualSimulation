@@ -2,9 +2,17 @@
   <div class="header">
     <p class="title">{{title}}</p>
     <div class="userInfo layout-row">
-      <p>经度：{{position.lon}} 纬度：{{position.lat}}</p>
-      <Avatar icon="person"/>
-      <span>{{username}}</span>
+      <p class="custom-mouse-position">经纬度：{{position.lat}}</p>
+      <Avatar class="icon" icon="person"/><!-- src="https://i.loli.net/2017/08/21/599a521472424.jpg" -->
+      <Dropdown class="user" @on-click="dropmenu" placement="bottom-start">
+        <a href="javascript:void(0)">
+          {{username}}
+          <Icon type="arrow-down-b"></Icon>
+        </a>
+        <DropdownMenu slot="list">
+          <DropdownItem name="usermanage">用户管理</DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
       <span>{{time}}</span>
       <div class="layout-column">
         <span>星期{{week}}</span>
@@ -38,7 +46,7 @@ export default {
   mounted(){
     getTime = setInterval(()=>{
       this.showTime();
-      this.position = window.mainmap.position
+      // this.position = window.mainmap.position
     },1000)
   },
   methods:{
@@ -46,6 +54,10 @@ export default {
       this.time = moment(new Date).format('HH:mm:ss');
       this.week = '天一二三四五六'.charAt(new Date().getDay());
       this.date = moment(new Date).format('YYYY/MM/DD');
+    },
+    dropmenu(name){
+      debugger
+      this.$router.push('/'+name);
     }
   }
 }
@@ -54,7 +66,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
   @mixin fontColor($middle:40%,$end:60%) {
-    background:-webkit-linear-gradient(top,#fff,#fff $middle,#81a7a7 $end,#475e5d);
+    background:-webkit-linear-gradient(top,#fff,#fff $middle,#81a7a7 $end,#115A5A);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
   }
@@ -80,10 +92,16 @@ export default {
       height: 58px;
       display: flex;
       align-items: center;
+      .user{
+        a{
+          color:#fff;
+          // @include fontColor(60%,80%);
+        }
+      }
       >*:not(:first-child){
         margin-right: 10px;
       }
-      >span:not(:first-child){
+      >span:not(.icon){
         @include fontColor(60%,80%);
       }
       >div{

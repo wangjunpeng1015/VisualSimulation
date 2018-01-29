@@ -21,7 +21,7 @@ export default {
 
   },
   mounted(){
-    window.mainmap = maps.initMap('map');
+    // window.mainmap = maps.initMap('map');
     // this.init();
     // this.initmap();
   },
@@ -41,8 +41,10 @@ export default {
     display: none;
   }
   #app{
-    // background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
-  	>div:nth-child(2){
+    background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
+  	>div:nth-child(2):not(.login){
+      height:100%;
+      padding:130px 40px 20px 40px;
       position: relative;
       z-index: 99;
   	}
@@ -53,6 +55,11 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
+    .ol-overlaycontainer-stopevent{
+      .ol-attribution, .ol-zoom{
+        display:none;
+      }
+    }
     .custom-mouse-position{
       top: 8px;
       right: 20%;

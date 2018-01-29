@@ -27,6 +27,12 @@ export default new Router({
       path: '/main',
       name: 'main',
       component: resolve => require(['@/components/page/main.vue'], resolve) 
+    },
+    /*用户管理*/
+    {
+      path: '/usermanage',
+      name: 'usermanage',
+      component: resolve => require(['@/components/page/usermanage.vue'], resolve) 
     }
   ]
 })

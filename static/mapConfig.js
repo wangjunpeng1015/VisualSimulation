@@ -10,7 +10,7 @@ function initMap(id){
   let mouse = new ol.control.MousePosition({
     coordinateFormat: ol.coordinate.createStringXY(4),
     projection: 'EPSG:4326',
-    // className: 'custom-mouse-position',  
+    className: 'custom-mouse-position',  
   })
   
   var newmap = function(id){

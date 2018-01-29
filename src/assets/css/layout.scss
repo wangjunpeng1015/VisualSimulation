@@ -1,19 +1,44 @@
-@font-face{
-  font-family: 'normal';
-  src:url('../../../static/fonts/造字工房坚黑.ttf');
-} 
-// @font-face{
-//   font-family: 'grid';
-//   src:url('../../../static/fonts/Lantinghei.ttc');
-// }
-
+$color:#91FFFF;
 *{
   margin: 0;
   padding: 0;
   font-size: 14px;
-  font-family: 'normal';
-  color:#91FFFF;
+  font-family: 'zzgf';
+  color:$color;
 }
+a{
+  // color:$color;
+  &:hover{
+    // color:$color;
+  }
+}
+@font-face{
+  font-family: 'zzgf';
+  src:url('../../../static/fonts/造字工房坚黑.ttf');
+}
+@mixin fontColor($middle:40%,$end:60%) {
+  background:-webkit-linear-gradient(top,#fff,#fff $middle,#81a7a7 $end,#115A5A);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+} 
+
+/*滚动条样式*/
+::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 10px;
+}
+::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: #579693;
+}
+::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+}
+
+
 .layout-row{
 	display: flex;
     flex-direction: row;
@@ -96,5 +121,75 @@
     width: 100%;
     height:26px;
     background:url('../image/nav/底部.png') no-repeat  0 0/100% 100%;
+  }
+}
+/* 包裹盒子样式 */
+.containbox{
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  .search{
+    margin:30px 0;
+    height: 46px;
+    display: flex;
+    justify-content:space-between;
+    input{
+      height: 46px;
+      border: none;
+      padding-left: 15px;
+      background:url('../../../static/image/搜索框.png') no-repeat 0 0/100% 100%;
+    }
+    .title{
+      @include fontColor;
+      font-weight:900;
+      display: flex;
+      flex-direction: row;
+      box-sizing: border-box;
+      align-items:center;
+      &:before{
+        margin-right: 15px;
+        content:'';
+        display: inline-block;
+        width: 4px;
+        height: 21px;
+        background-color:$color;
+      }
+    }
+    .func{
+      display: flex;
+      flex-direction: row;
+      box-sizing: border-box;
+      align-items:center;
+      .inputs{
+
+      }
+      .buttons{
+        margin: -5px 0 0 10px;
+      }
+    }
+  }
+  .contain-head{
+    height: 59px;
+    background:url('../../../static/image/头部.png') no-repeat 0 0/100% 100%;
+    h3{
+      font-size: 18px;
+      padding-left: 20px;
+      line-height: 59px;
+    }
+  }
+  .container{
+    padding: 0 20px;
+    flex:1;
+    background:url('../../../static/image/中间框体.png') no-repeat 0 0/100% 100%;
+  }
+  &:after{
+    content:'';
+    display: inline-block;
+    height: 59px;
+    background:url('../../../static/image/底部.png') no-repeat 0 0/100% 100%;
+  }
+  .contain-foot{
+    height: 59px;
+    background:url('../../../static/image/底部.png') no-repeat 0 0/100% 100%;
   }
 }
