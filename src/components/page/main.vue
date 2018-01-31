@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="main">
   	<!-- nav导航 -->
    <menus title="平台功能区" @choosenav="chooseNav" :menus="navs"></menus>
    <!-- 数据列表 -->
@@ -63,16 +63,15 @@ export default {
 			],
 			/*nav导航数据*/
 			navs:[
-				{name:'场景',icon:''},
-				{name:'目标',icon:''},
-				{name:'平台',icon:''},
-				{name:'航线',icon:''},
-				{name:'规则配置',icon:''}
+				{name:'模型管理',icon:''},
+				{name:'任务规则',icon:''},
+				{name:'航迹规划',icon:''},
+				{name:'战技性能',icon:''}
 			],
 			/*右下角菜单数据*/
 			menuList:[
-				{name:'综合态势',nm:'zhts'},
-				{name:'任务场景',nm:'rwcj'},
+				{name:'系统设置',nm:'zhts'},
+				{name:'XX管理',nm:'rwcj'},
 				{name:'基础数据库',nm:'jcsjk'}
 			]
 		}

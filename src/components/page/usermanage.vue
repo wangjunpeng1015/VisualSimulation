@@ -42,6 +42,11 @@
               key: 'name'
           },
           {
+              title: '部门',
+              sortable: true,
+              key: 'name'
+          },
+          {
               title: '手机号',
               sortable: true,
               key: 'age'
@@ -50,6 +55,11 @@
               title: '性别',
               sortable: true,
               key: 'address'
+          },
+          {
+              title: '上次操作时间',
+              sortable: true,
+              key: ''
           }
         ],
         gridData:[

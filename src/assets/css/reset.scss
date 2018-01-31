@@ -1,5 +1,14 @@
 /* input重置 */
 $color:#91FFFF;
+/* 统一样式清除 */
+// box-shadow
+.ivu-select-visible .ivu-select-selection{
+	box-shadow:none;
+}
+//border:
+.ivu-select-selection{
+	border:none;
+}
 .ivu-input{
 	&:focus{
 		box-shadow:none;
@@ -9,7 +18,7 @@ $color:#91FFFF;
 .ivu-form-item{
 	margin-bottom: 15px;
 }
-.ivu-checkbox-wrapper .ivu-checkbox-inner,.ivu-input{
+.ivu-checkbox-wrapper .ivu-checkbox-inner,.ivu-input,.ivu-select-selection{
 	background-color:transparent;
 }
 .ivu-checkbox-wrapper .ivu-checkbox-inner{
@@ -42,6 +51,7 @@ input::-webkit-input-placeholder{
 			}
 		}
 		.ivu-table-body{
+			overflow: hidden;
 			flex:1;
 		}
 		.ivu-table-row.ivu-table-row-hover td{
@@ -65,5 +75,54 @@ button{
 			background-color:transparent;
 			background:url('../../../static/image/buttonHover.png') no-repeat 0 0/100% 100%;
 		}
+	}
+}
+/* 按钮下拉重置 */
+.ivu-select-dropdown{
+	// background-color:transparent;
+	background:url('../image/header/usertop.png') no-repeat scroll 0 0/100% 13px content-box padding-box,
+			   url('../image/header/userbotton.png') no-repeat scroll 0 bottom/100% 13px content-box padding-box;
+	.ivu-dropdown-menu{
+		margin: 13px 0;
+		background:url('../image/header/usermiddle.png') repeat-y scroll 0 0/100% 100% content-box padding-box;
+		.ivu-dropdown-item{
+			margin: 0 10px;
+			&:hover{
+				background-color: rgba(68,111,106,.8);
+			}
+			&:not(:last-child){
+				border-bottom: 1px solid #9fe6e6;
+			}
+		}
+	}
+}
+/* 下拉框重置 */
+.ivu-select{
+	color:#fff;
+	height:38px;
+	background:url("../../../static/image/input.png") no-repeat 0 0/100% 100%;
+	.ivu-select-input{
+		color:#fff;
+	    padding: 5px 24px 0 8px;
+	}
+	.ivu-select-arrow{
+		color:$color;
+		margin-top: -3px;
+	}
+}
+/* 树重置 */
+.ivu-tree{
+	.ivu-tree-title{
+		color:#fff;
+		&:hover{
+			background-color: #6b7777;
+		}
+	}
+	.ivu-icon-ios-folder-outline:before{
+		content:'';
+		display: inline-block;
+		width:16px;
+		height: 12px;
+		background:url('../../../static/image/tree.png') no-repeat;
 	}
 }

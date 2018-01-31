@@ -2,7 +2,7 @@ const config = require('../static/config')//引入配置文件
 function initMap(id){
   let view = new ol.View({   // 视图
     center:ol.proj.transform([104.06667, 30.66667], 'EPSG:4326', 'EPSG:3857'),// 设置地图中心坐标点
-    zoom:3,
+    zoom:5,
     // extent:[-180,180,-90,90]  
   });
 
@@ -31,7 +31,8 @@ function initMap(id){
           new ol.layer.Tile({
             source: new ol.source.BingMaps({
                   key: 'AgiU9gCjKNfaR2yFSDfLw8e9zUlAYisRvRC2_L-LsGYN2bII5ZUvorfP3QJvxmjn', //自己申请的key
-                  imagerySet: 'Aerial'
+                  imagerySet: 'Aerial',
+                  wrapX:false
               })
           }),
         ],// 图层可以在地图初始化一起进行初始化也可以后期通过addLayer方法进行添加
@@ -247,8 +248,7 @@ function initMap(id){
       map.render();
     },
     /*地图飞到某点*/
-    mapFly(position,callback){
-      callback = callback?callback:new function(){};
+    mapFly(position,callback={}){
       var duration = 2000;
       var zoom = view.getZoom();
       view.animate({

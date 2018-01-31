@@ -58,7 +58,7 @@ router.afterEach((to, from, next) => {
 Vue.prototype.ws = (function(){
   let ws = new WebSocket(config.wsUrl);
   ws.onopen = function(evt) { 
-    console.log("Connection open ..."); 
+    console.log("websocket已打开"); 
     ws.send("Hello WebSockets!");
   };
 
@@ -68,7 +68,7 @@ Vue.prototype.ws = (function(){
   };
 
   ws.onclose = function(evt) {
-    console.log("Connection closed.");
+    console.warn("websocket已关闭");
   };
   return ws
 })();

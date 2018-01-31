@@ -36,18 +36,22 @@ export default {
   html,body,#app{
     width: 100%;
     height: 100%;
+    overflow:hidden;
   }
   [v-cloak] {
     display: none;
   }
   #app{
+    background-color:black;
     background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
-  	>div:nth-child(2):not(.login){
-      height:100%;
-      padding:130px 40px 20px 40px;
-      position: relative;
-      z-index: 99;
-  	}
+  	>div:nth-child(2){
+        position: relative;
+        z-index: 99;
+        &:not(.main):not(.login){
+          height:100%;
+          padding:130px 40px 20px 40px;
+        }
+      }
   }
   #map{
     position: absolute;

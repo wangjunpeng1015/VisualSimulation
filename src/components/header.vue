@@ -11,6 +11,10 @@
         </a>
         <DropdownMenu slot="list">
           <DropdownItem name="usermanage">用户管理</DropdownItem>
+          <DropdownItem name="usermanage">用户管理</DropdownItem>
+          <DropdownItem name="usermanage">用户管理</DropdownItem>
+          <DropdownItem name="usermanage">用户管理</DropdownItem>
+          <DropdownItem name="usermanage">用户管理</DropdownItem>
         </DropdownMenu>
       </Dropdown>
       <span>{{time}}</span>
@@ -93,9 +97,11 @@ export default {
       display: flex;
       align-items: center;
       .user{
+        li{
+          color:#fff;
+        }
         a{
           color:#fff;
-          // @include fontColor(60%,80%);
         }
       }
       >*:not(:first-child){

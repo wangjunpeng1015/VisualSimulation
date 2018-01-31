@@ -33,6 +33,12 @@ export default new Router({
       path: '/usermanage',
       name: 'usermanage',
       component: resolve => require(['@/components/page/usermanage.vue'], resolve) 
+    },
+    /*场景设置*/
+    {
+      path: '/scene',
+      name: 'scene',
+      component: resolve => require(['@/components/page/scene.vue'], resolve) 
     }
   ]
 })

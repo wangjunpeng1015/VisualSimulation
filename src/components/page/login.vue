@@ -27,19 +27,19 @@
         <!-- 登录 -->
         <div class="form" v-if="!regist">
           <h1>欢迎登陆仿真模拟系统</h1>
-          <Form ref="user" :rules="ruleValidate" :model="user" >
-            <FormItem  prop="UserName">
-                <Input name="UserName" v-model="user.UserName" placeholder="账号">
-                <span slot="prepend">
-                  <Icon type="android-person" size="24"></Icon>
-                </span>
+          <Form ref="user" :rules="ruleValidate" :model="user">
+            <FormItem prop="UserName">
+                <Input v-model="user.UserName" placeholder="账号">
+                  <span slot="prepend">
+                    <Icon type="android-person" size="24"></Icon>
+                  </span>
                 </Input>
             </FormItem>
             <FormItem prop="Password">
-                <Input name="Password" v-model="user.Password" placeholder="密码">
-                <span slot="prepend">
-                  <Icon type="ios-locked" size="24"></Icon>
-                </span>
+                <Input v-model="user.Password" placeholder="密码">
+                  <span slot="prepend">
+                    <Icon type="ios-locked" size="24"></Icon>
+                  </span>
                 </Input>
             </FormItem>
             <div class="middle layout-row">
@@ -56,18 +56,30 @@
           <h1>欢迎注册仿真模拟系统</h1>
           <Form ref="reg" :rules="regruleValidate" :model="reg" >
             <FormItem prop="UserName">
-              <Input v-model="reg.UserName" placeholder="账号"></Input>
+              <Input v-model="reg.UserName" placeholder="账号">
+                <span slot="prepend">
+                </span>
+              </Input>
             </FormItem>
             <FormItem prop="Password">
-              <Input v-model="reg.Password" placeholder="密码"></Input>
+              <Input v-model="reg.Password" placeholder="密码">
+                <span slot="prepend">
+                </span>
+              </Input>
             </FormItem>
             <FormItem prop="rePassword">
-              <Input v-model="reg.rePassword" placeholder="确认密码"></Input>
+              <Input v-model="reg.rePassword" placeholder="确认密码">
+                <span slot="prepend">
+                </span>
+              </Input>
             </FormItem>
             <FormItem prop="phone">
-              <Input v-model="reg.phone" placeholder="手机号"></Input>
+              <Input v-model="reg.phone" placeholder="手机号">
+                <span slot="prepend">
+                </span>
+              </Input>
             </FormItem>
-            <FormItem label="">
+            <FormItem>
               <RadioGroup v-model="reg.sex">
                 <Radio label="male">男</Radio>
                 <Radio label="female">女</Radio>
@@ -110,7 +122,7 @@
                 message: '请输入密码！',
                 trigger: 'blur'
               }
-          ],
+          ]
         },
         reg:{
           UserName:'',
@@ -206,47 +218,7 @@
     display:flex;
     align-items: center;
     background:url('../../assets/image/login/bg.png') no-repeat 0 0/100% 100%;
-    .list{
-      li{
-        position: absolute;
-        opacity: .1;
-        transition: all linear 3s;
-        &.active{
-          opacity: 1;
-        }
-      }
-      .list1{
-        left: -505px;
-        top: -55px;
-        :first-child{
-          margin-bottom: 55px;
-        }
-      }
-      .list2{
-        left: -526px;
-        bottom: -55px;
-        :last-child{
-          margin-bottom: 110px;
-        }
-      }
-      .list3{
-        right: -506px;
-        top: -55px;
-      }
-      .list4{
-        right: -530px;
-        :first-child{
-          margin-bottom: 55px;
-        }
-      }
-      .list5{
-        right: -250px;
-        bottom:-160px;
-        :first-child{
-          margin-bottom: 55px;
-        }
-      }
-    }
+    /* 登录界面 */
     .form-box{
       display:flex;
       position:relative;
@@ -255,11 +227,6 @@
       width:637px;
       height:626px;
       margin:0 auto;
-      &.regist{
-        background:url('../../assets/image/login/不转圆1.png') no-repeat;
-        width:797px;
-        height:781px;
-      }
       &:before{
         content:'';
         position: absolute;
@@ -282,6 +249,47 @@
         height:432px;
         display:inline-block;
         background:url('../../assets/image/login/转圆1.png');
+      }
+      .list{
+        li{
+          position: absolute;
+          opacity: 0;
+          transition: all linear 3s;
+          &.active{
+            opacity: 1;
+          }
+        }
+        .list1{
+          left: -505px;
+          top: -55px;
+          :first-child{
+            margin-bottom: 55px;
+          }
+        }
+        .list2{
+          left: -526px;
+          bottom: -55px;
+          :last-child{
+            margin-bottom: 110px;
+          }
+        }
+        .list3{
+          right: -506px;
+          top: -55px;
+        }
+        .list4{
+          right: -530px;
+          :first-child{
+            margin-bottom: 55px;
+          }
+        }
+        .list5{
+          right: -250px;
+          bottom:-160px;
+          :first-child{
+            margin-bottom: 55px;
+          }
+        }
       }
       .form{
         margin:0 auto;
@@ -322,7 +330,7 @@
       }
       .ivu-input-wrapper{
         height: 52px;
-        background:url("../../assets/image/login/登录框.png") no-repeat;
+        background:url("../../../static/image/input.png") no-repeat;
         .ivu-input-group-append, .ivu-input-group-prepend{
           border:none;
         }
@@ -330,6 +338,51 @@
           height: inherit;
           border:none;
           box-shadow: none;
+        }
+      }
+    }
+    /* 注册界面 */
+    .regist{
+      background:url('../../assets/image/login/不转圆1.png') no-repeat;
+      width:797px;
+      height:781px;
+      &:before{
+        right:45px;
+        width:353px;
+        height:704px;
+        background:url('../../assets/image/login/转圆22.png');
+      }
+      &:after{
+        transform-origin: 175px 76%;
+        width:589px;
+        height:540px;
+        background:url('../../assets/image/login/转圆11.png');
+      }
+      .form{
+        .buttons{
+          button{
+            width:173px;
+            background:url('../../assets/image/login/注册按钮.png');
+          }
+        }
+      }
+      .list{
+        .list1{
+          left: -482px;
+          top: -20px;
+        }
+        .list2{
+          left: -480px;;
+        }
+        .list3{
+          top: -15px;
+        }
+        .list4{
+          right: -530px;
+        }
+        .list5{
+          right: -350px;
+          bottom: -90px;
         }
       }
     }
