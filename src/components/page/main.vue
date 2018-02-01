@@ -1,7 +1,7 @@
 <template>
   <div class="main">
   	<!-- nav导航 -->
-   <menus title="平台功能区" @choosenav="chooseNav" :menus="navs"></menus>
+   <menus v-drag title="平台功能区" @choosenav="chooseNav" :menus="navs"></menus>
    <!-- 数据列表 -->
    <div class="grid-box nav-box">
 		<div class="grid-head nav-head">

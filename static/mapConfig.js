@@ -1,4 +1,7 @@
 const config = require('../static/config')//引入配置文件
+const iconUrl = {
+  tower:'static/image/map/tower.png'
+}
 function initMap(id){
   let view = new ol.View({   // 视图
     center:ol.proj.transform([104.06667, 30.66667], 'EPSG:4326', 'EPSG:3857'),// 设置地图中心坐标点
@@ -7,11 +10,11 @@ function initMap(id){
   });
 
   //鼠标经纬度
-  let mouse = new ol.control.MousePosition({
-    coordinateFormat: ol.coordinate.createStringXY(4),
-    projection: 'EPSG:4326',
-    className: 'custom-mouse-position',  
-  })
+  // let mouse = new ol.control.MousePosition({
+  //   coordinateFormat: ol.coordinate.createStringXY(4),
+  //   projection: 'EPSG:4326',
+  //   // className: 'custom-mouse-position',  
+  // })
   
   var newmap = function(id){
     let map =  new ol.Map({
@@ -37,17 +40,16 @@ function initMap(id){
           }),
         ],// 图层可以在地图初始化一起进行初始化也可以后期通过addLayer方法进行添加
         controls: ol.control.defaults().extend([
-          mouse//鼠标经纬度
+          // mouse//鼠标经纬度
         ]),
         view:view
     });
-    map.on('pointermove', function (e) {
-      let position = mouse.v.split(',');
-      objInstance.position = {
-        lon:position[0],//经度
-        lat:position[1]//纬度
-      }
-     })
+    map.on('pointermove',function(e){  
+       var coord = e.coordinate;
+       var degrees = ol.proj.transform(coord, 'EPSG:3857','EPSG:4326');  
+       var position = ol.coordinate.toStringXY(degrees, 4);
+       $('#longlat>span').text(position)
+    });
     return map;
   }
   var map = newmap(id);
@@ -55,7 +57,9 @@ function initMap(id){
   function formatLonLat(array){
     return ol.proj.transform([array[0], array[1]], 'EPSG:4326', 'EPSG:3857');
   };
+  let jd = 70,wd=15;
   var objInstance = {
+    map,
     /*画动线条*/
     drawAnimateLine(data){
       var style = new ol.style.Style({
@@ -220,35 +224,29 @@ function initMap(id){
           })
       });
 
-      var n = 1;
-      var omegaTheta = 30000; // Rotation period in ms
-      var R = 100;
-      var r = 100;
-      var p = 2e6;
       map.on('postcompose', function(event) {
         var vectorContext = event.vectorContext;
         var frameState = event.frameState;
-        var theta = 2 * Math.PI * frameState.time / omegaTheta;
-        var coordinates = [];
-        var i;
-        for (i = 0; i < n; ++i) {
-          var t = theta + 2 * Math.PI * i / n;
-          var x = (R + r) * Math.cos(t) + p * Math.cos((R + r) * t / r);
-          var y = (R + r) * Math.sin(t) + p * Math.sin((R + r) * t / r);
-          coordinates.push([x, y]);
-        }
+        var now = frameState.time;
+        var coordinates=[];
+        if(jd>180) jd=70;
+        if(wd>90) wd=15;
+        coordinates.push(formatLonLat([jd++,wd++]));
+        debugger
+
         vectorContext.drawGeometry(new ol.geom.MultiPoint(coordinates));
 
         var headPoint = new ol.geom.Point(coordinates[coordinates.length - 1]);
         var feature = new ol.Feature(headPoint);
         vectorContext.drawFeature(feature,headOuterImageStyle);
 
-        map.render();
+        map.render();//循环触发动起来
       });
-      map.render();
+      map.render();//初始化动起来
     },
     /*地图飞到某点*/
     mapFly(position,callback={}){
+      position = formatLonLat(position);
       var duration = 2000;
       var zoom = view.getZoom();
       view.animate({
@@ -263,7 +261,26 @@ function initMap(id){
         duration: duration / 2
       }, callback);
     },
-    position:{}//返回经纬度
+    /*添加静态设施*/
+    drawStatic(position,gg){
+      position = formatLonLat(position);
+      let contour = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          features: [ new ol.Feature(new ol.geom.Point(position))],
+           wrapX:false
+        }),
+        style: new ol.style.Style({
+          image: new ol.style.Icon(({
+            // anchor: [0.5, 46],
+            anchor: gg,
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src: iconUrl.tower
+          }))
+        })
+      });
+      map.addLayer(contour);
+    },
   }
   return objInstance;
 }

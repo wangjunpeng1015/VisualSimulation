@@ -21,7 +21,7 @@ export default {
 
   },
   mounted(){
-    // window.mainmap = maps.initMap('map');
+    window.mainmap = maps.initMap('map');
     // this.init();
     // this.initmap();
   },
@@ -43,7 +43,7 @@ export default {
   }
   #app{
     background-color:black;
-    background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
+    // background:url('assets/image/banner.png') no-repeat 0 0/100% 100%;
   	>div:nth-child(2){
         position: relative;
         z-index: 99;

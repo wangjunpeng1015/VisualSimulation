@@ -2,8 +2,8 @@
   <div class="header">
     <p class="title">{{title}}</p>
     <div class="userInfo layout-row">
-      <p class="custom-mouse-position">经纬度：{{position.lat}}</p>
-      <Avatar class="icon" icon="person"/><!-- src="https://i.loli.net/2017/08/21/599a521472424.jpg" -->
+      <p id="longlat">经纬度：<span></span></p>
+      <Avatar class="icon" icon="person"/><!--用户图片列子 src="https://i.loli.net/2017/08/21/599a521472424.jpg" -->
       <Dropdown class="user" @on-click="dropmenu" placement="bottom-start">
         <a href="javascript:void(0)">
           {{username}}
@@ -36,10 +36,6 @@ export default {
       time:moment(new Date).format('HH:mm:ss'),
       week:'天',
       date:'2018/01/11',
-      position:{
-        lon:'',
-        lat:''
-      }
     }
   },
   computed:{
@@ -50,7 +46,6 @@ export default {
   mounted(){
     getTime = setInterval(()=>{
       this.showTime();
-      // this.position = window.mainmap.position
     },1000)
   },
   methods:{

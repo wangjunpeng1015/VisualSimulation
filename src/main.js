@@ -8,15 +8,21 @@ import store from './vuex/store'
 import qs from 'qs'
 import axios from 'axios'
 import _ from 'lodash' //引入数据操作处理js
+import $ from 'jquery' //引入jquery
 import config from '../static/config'//引入配置文件
 /*引用CSS样式*/
 import 'iview/dist/styles/iview.css'//引入iview的css文件
 // import 'vis/dist/vis.min.css'//引入vis的css文件
 import './assets/css/layout.scss'//引入布局的scss文件
 import './assets/css/reset.scss'//引入重置的scss文件
+
+/*自定义指令*/
+import './directive'//指令引用只能引用index.js名称（指令都写在一起）
+
 Vue.use(iview)
 Vue.use(Vuex)
 
+window.$ = $;
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 /*请求头配置*/
