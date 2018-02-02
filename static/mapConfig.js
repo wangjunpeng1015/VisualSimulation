@@ -45,10 +45,15 @@ function initMap(id){
         view:view
     });
     map.on('pointermove',function(e){  
+      /*显示坐标*/
        var coord = e.coordinate;
        var degrees = ol.proj.transform(coord, 'EPSG:3857','EPSG:4326');  
        var position = ol.coordinate.toStringXY(degrees, 4);
        $('#longlat>span').text(position)
+       /*鼠标放在Featrue上显示手型*/
+       let pixel = map.getEventPixel(e.originalEvent);
+       let hit = map.hasFeatureAtPixel(pixel);
+       map.getTargetElement().style.cursor = hit?'pointer':'';
     });
     return map;
   }
@@ -232,7 +237,6 @@ function initMap(id){
         if(jd>180) jd=70;
         if(wd>90) wd=15;
         coordinates.push(formatLonLat([jd++,wd++]));
-        debugger
 
         vectorContext.drawGeometry(new ol.geom.MultiPoint(coordinates));
 
@@ -246,11 +250,10 @@ function initMap(id){
     },
     /*地图飞到某点*/
     mapFly(position,callback={}){
-      position = formatLonLat(position);
       var duration = 2000;
       var zoom = view.getZoom();
       view.animate({
-        center: position,
+        center: ol.proj.fromLonLat(position),
         duration: duration
       }, callback);
       view.animate({
@@ -262,24 +265,58 @@ function initMap(id){
       }, callback);
     },
     /*添加静态设施*/
-    drawStatic(position,gg){
-      position = formatLonLat(position);
-      let contour = new ol.layer.Vector({
-        source: new ol.source.Vector({
-          features: [ new ol.Feature(new ol.geom.Point(position))],
-           wrapX:false
-        }),
-        style: new ol.style.Style({
-          image: new ol.style.Icon(({
-            // anchor: [0.5, 46],
-            anchor: gg,
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels',
-            src: iconUrl.tower
-          }))
+    drawStatic(jsonObj){
+      let beijing = ol.proj.fromLonLat([116.28,39.54]);
+      /*设置静态设施样式*/
+      let createLabelStyle = feature=>{
+        return new ol.style.Style({
+          image:new ol.style.Icon(({
+            anchor:[0.5,50],//偏离原来左边
+            anchorOrigin:'top-right',
+            anchorXUnits:'fraction',
+            anchorYUnits:'pixels',
+            offsetOrigin:'bottom-right',
+            src:'static/image/map/tower.png'
+          })),
+          text:new ol.style.Text({
+            textAlign:'center',
+            textBaseline:'middle',
+            text:feature.get('name')+'人数：'+feature.get('population'),
+            fill:new ol.style.Fill({color:'#a30'}),//字体颜色
+            stroke: new ol.style.Stroke({color:'#ffcc33',width:3})
+          })
         })
+      };
+      let iconFeature = new ol.Feature({
+        geometry:new ol.geom.Point(beijing),
+        name:'北京市',
+        population:2115
       });
-      map.addLayer(contour);
+      iconFeature.setStyle(createLabelStyle(iconFeature));
+      let vectorSource = new ol.source.Vector({
+        features:[iconFeature,iconFeatures]
+      });
+      let staticLayer = new ol.layer.Vector({
+        source:vectorSource
+      });
+      map.addLayer(staticLayer);
+      // position = formatLonLat(position);
+      // window.contour = new ol.layer.Vector({
+      //   id:'static-1',
+      //   source: new ol.source.Vector({
+      //     features: [new ol.Feature(new ol.geom.Point(position))],
+      //      wrapX:false
+      //   }),
+      //   style: new ol.style.Style({
+      //     image: new ol.style.Icon(({
+      //       anchor: [0.5,1],
+      //       anchorXUnits: 'fraction',
+      //       anchorYUnits: 'pixels',
+      //       src: iconUrl.tower
+      //     }))
+      //   })
+      // });
+      // map.addLayer(contour);
     },
   }
   return objInstance;

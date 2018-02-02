@@ -1,18 +1,26 @@
 <template>
-  <div class="">
-    <heade title="可视化仿真模拟软件"></heade>
-    <!-- 时间轴 -->
-    <div id="timeline"></div>
+  <div class="main">
+    <!-- <div id="timeline"></div>
     <input type="text" :value="message">
-     <p>{{message}}</p>
-        <!-- 直接在模板中绑定表达式 -->
-        <p>{{message.split('').reverse().join('')}}</p>
-
-        <!-- //运用计算属性 -->
-        <p>{{reverseMessage}}</p>
-
-        <!-- //运用methods方式 -->
-        <p>{{methodMessage()}}</p>
+    <p>{{message}}</p>
+        直接在模板中绑定表达式
+    	<p>{{message.split('').reverse().join('')}}</p>
+        //运用计算属性
+    <p>{{reverseMessage}}</p>
+        //运用methods方式
+    <p>{{methodMessage()}}</p> -->
+    
+    <div id='menu'>
+    	<label for="qq" class="checkbox">
+    		<input id='qq' type="radio" name='label' value='vector' checked='checked'>Vector Labels
+    	</label>
+    	<label for="ww" class="checkbox">
+    		<input id='ww' type="radio" name='label' value='overlay'>overlay Labels
+    	</label>
+    </div>
+    <div id='label' style="display:none"></div>
+    <div id="marker" class='marker' title='marker'>123
+    </div>
   </div>
 </template>
 
@@ -33,12 +41,63 @@ export default {
 	   }
 	},
 	mounted(){
-		// this.init();
+		this.init();
 		this.map();
 	},
 	methods:{
 		init(){
-			this.initTimeLine();
+			let beijing = ol.proj.fromLonLat([116.28,39.54]);
+			let beijings = ol.proj.fromLonLat([106.28,38.54]);
+			let wuhan = ol.proj.fromLonLat([114.21,30.37]);
+
+			let createLabelStyle = feature=>{
+				return new ol.style.Style({
+					image:new ol.style.Icon(({
+						anchor:[0.5,50],//偏离原来左边
+						anchorOrigin:'top-right',
+						anchorXUnits:'fraction',
+						anchorYUnits:'pixels',
+						offsetOrigin:'bottom-right',
+						src:'static/image/map/tower.png'
+					})),
+					text:new ol.style.Text({
+						textAlign:'center',
+						textBaseline:'middle',
+						text:feature.get('name')+'人数：'+feature.get('population'),
+						fill:new ol.style.Fill({color:'#a30'}),//字体颜色
+						stroke: new ol.style.Stroke({color:'#ffcc33',width:3})
+					})
+				})
+			}
+
+			let iconFeature = new ol.Feature({
+				geometry:new ol.geom.Point(beijing),
+				name:'北京市',
+				population:2115
+			});
+			let iconFeatures = new ol.Feature({
+				geometry:new ol.geom.Point(beijings),
+				name:'北京市1',
+				population:2115
+			});
+			iconFeature.setStyle(createLabelStyle(iconFeature));
+			iconFeatures.setStyle(createLabelStyle(iconFeatures));
+			let vectorSource = new ol.source.Vector({
+				features:[iconFeature,iconFeatures]
+			});
+			let vectorLayer = new ol.layer.Vector({
+				source:vectorSource
+			});
+			mainmap.map.addLayer(vectorLayer);
+
+			let marker = new ol.Overlay({
+				id:'111',
+				position:wuhan,
+				positioning:'center-center',
+				element:document.getElementById('marker'),
+				stopEvent:false
+			});
+			mainmap.map.addOverlay(marker);
 		},
 		map(){
 			// mainmap.initMap(document.getElementById('map'));
@@ -70,7 +129,18 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
-
+<style lang="scss" scoped>
+	.main{
+		margin:10%;	
+	}
+	#menu{
+		width:100%;
+		height:20px;
+	}
+	.checkbox{
+		margin:5px 15px;
+	}
+	.address{
+		color:red;
+	}
 </style>
