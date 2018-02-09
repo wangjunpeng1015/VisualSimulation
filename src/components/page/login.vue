@@ -29,14 +29,14 @@
           <h1>欢迎登陆仿真模拟系统</h1>
           <Form ref="user" :rules="ruleValidate" :model="user">
             <FormItem prop="UserName">
-                <Input v-model="user.UserName" placeholder="账号">
+                <Input v-model="user.UserName" @keyup.enter="submit('user')" placeholder="账号">
                   <span slot="prepend">
                     <Icon type="android-person" size="24"></Icon>
                   </span>
                 </Input>
             </FormItem>
             <FormItem prop="Password">
-                <Input v-model="user.Password" placeholder="密码">
+                <Input v-model="user.Password" @keyup.enter="submit('user')" placeholder="密码">
                   <span slot="prepend">
                     <Icon type="ios-locked" size="24"></Icon>
                   </span>
@@ -44,7 +44,7 @@
             </FormItem>
             <div class="middle layout-row">
               <Checkbox v-model="checked">记住密码</Checkbox>
-              <p @click="registered">立即注册</p>
+              <p @click="regist=true">立即注册</p>
             </div>
             <div class="buttons">
               <Button @click="submit('user')"></Button>
@@ -73,20 +73,20 @@
                 </span>
               </Input>
             </FormItem>
-            <FormItem prop="phone">
-              <Input v-model="reg.phone" placeholder="手机号">
+            <FormItem prop="PhoneNumber">
+              <Input v-model="reg.PhoneNumber" placeholder="手机号">
                 <span slot="prepend">
                 </span>
               </Input>
             </FormItem>
             <FormItem>
-              <RadioGroup v-model="reg.sex">
+              <RadioGroup v-model="reg.Sex">
                 <Radio label="male">男</Radio>
                 <Radio label="female">女</Radio>
               </RadioGroup>
             </FormItem>
             <div class="buttons">
-              <Button @click="registered('user')"></Button>
+              <Button @click="registered('reg')"></Button>
             </div>
           </Form>
         </div>
@@ -128,8 +128,8 @@
           UserName:'',
           Password:'',
           rePassword:'',
-          phone:'',
-          sex:'male'
+          PhoneNumber:'',
+          Sex:'male'
         },
         regruleValidate:{
           UserName: [
@@ -170,18 +170,36 @@
       submit(name){
         this.$refs[name].validate((valid) => {
            if(valid) {
-             this.regist = false;
-             this.$store.state.userName = this.user.UserName;
-             this.$http.post('/users',this.user).then(res=>{
-              //登录成功跳转主页
-              this.$router.push('/main');
+             this.$http.get('/users/Login?UserName='+this.user.UserName+'&Password='+this.user.Password).then((res)=>{
+                this.regist = false;
+                let userInfo = {
+                  username:this.user.UserName,
+                  authority:res.data.Role,
+                  isLogin:true
+                };
+                this.$store.commit('changeUser',userInfo);
+                //改变vuex中存的user
+                //登录成功跳转主页
+                this.$router.push('/main');
+             },(res)=>{
+                this.$Notice.error({desc: '登录出错！'});
              });
            }
          })
       },
       /*注册*/
       registered(name){
-        this.regist = true;
+        //切换到注册
+        this.$refs[name].validate((valid) => {
+           if(valid) {
+             delete this.reg.rePassword;
+             this.$http.post('/users/Register',this.reg).then(res=>{
+              this.regist = false;//返回到登录
+             },res=>{
+              this.$Notice.error({desc: '注册出错！'});
+             });
+           }
+         })
       }
     }
   }

@@ -141,6 +141,8 @@ a{
   box-sizing: border-box;
   .title{
     @include fontColor;
+    margin:15px 0;
+    font-size: 15px;
     font-weight:900;
     display: flex;
     flex-direction: row;
@@ -159,7 +161,6 @@ a{
     margin:30px 0;
     height: 46px;
     display: flex;
-    justify-content:space-between;
     input{
       height: 46px;
       border: none;
@@ -167,10 +168,13 @@ a{
       background:url('../../../static/image/搜索框.png') no-repeat 0 0/100% 100%;
     }
     .func{
+      padding:0 3%;
       display: flex;
       flex-direction: row;
       box-sizing: border-box;
       align-items:center;
+      justify-content:space-between;
+
       .inputs{
 
       }
@@ -192,6 +196,27 @@ a{
     padding: 0 20px;
     flex:1;
     background:url('../../../static/image/中间框体.png') no-repeat 0 0/100% 100%;
+    >:not(:last-child):not(.search){
+      border-bottom:1px solid $color;
+      margin-bottom: 15px;
+      position: relative;
+      &:before,&:after{
+        border-radius: 15%;
+        position:absolute;
+        bottom: -2px;
+        content:'';
+        display: inline-block;
+        width: 6%;
+        height:3px;
+        background-color:  $color;
+      }
+      &:before{
+        left: -17px;
+      }
+      &:after{
+        right: -17px;
+      }
+    }
   }
   &:after{
     content:'';

@@ -2,17 +2,21 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
+let userInfo = sessionStorage.getItem('userInfo');
 
 const store = new Vuex.Store({
   // 定义状态
-  state: {
-    username: '赵六',
-    login:true
-  },
+  state: JSON.parse(userInfo) || {
+                  username:'',
+                  authority:0,
+                  isLogin:false
+                },
   //改变 state 的一些方法
   mutations:{
-	  shareWs(state,dispath){
-	      state.dispath = dispath
+    //改变登录用户
+	  changeUser(state,params){
+      sessionStorage.setItem('userInfo',JSON.stringify(params));
+      state.username = params;
 	  },
 	  reduce(state){
 	      state.count-=1;

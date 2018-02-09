@@ -14,13 +14,13 @@ import Vue from 'vue'
 // binding: 一个对象，包含指令的很多信息。
 // vnode: Vue编译生成的虚拟节点。
 
-/*拖拽指令*/
+/*拖拽移动元素指令*/
 Vue.directive('drag', {
   inserted:function(el,binding,vnode){ //inserted 钩子函数:当元素被插入父元素时触发,可省略
 	  let oDiv=el; //el --> 触发的DOM元素
 	  oDiv.style.position = 'fixed';
 	  oDiv.style.zIndex = '99';
-	  oDiv.style.cursor = 'pointer';
+	  oDiv.style.cursor = 'move';
 	  oDiv.onmousedown=function(e){
 	    let l=e.clientX-oDiv.offsetLeft;
 	    let t=e.clientY-oDiv.offsetTop;

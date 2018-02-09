@@ -29,7 +29,8 @@ input::-webkit-input-placeholder{
 }
 /* 表格重置 */
 .ivu-table-wrapper{
-	border:1px solid #3a595c;
+	// border:1px solid #3a595c;
+	border:none;
 	.ivu-table{
 		display: flex;
 		flex-direction: column;
@@ -41,17 +42,21 @@ input::-webkit-input-placeholder{
 		}
 		.ivu-table-header{
 			thead{
-
+				th{
+					text-align: center;
+				}
 			}
 		}
 
 		.ivu-table-tbody{
+			td{
+				text-align: center;
+			}
 			tr:nth-child(2n) td{
 				background-color: rgba(33,55,55,.5);
 			}
 		}
 		.ivu-table-body{
-			overflow: hidden;
 			flex:1;
 		}
 		.ivu-table-row.ivu-table-row-hover td{
@@ -68,12 +73,24 @@ input::-webkit-input-placeholder{
 /* 按钮重置 */
 button{
 	&.btn{
+		opacity: .8;
 	    padding-top: 16px;
 		border:none;
 		background:url('../../../static/image/button.png') no-repeat 0 0/100% 100%;
 		&:hover{
 			background-color:transparent;
-			background:url('../../../static/image/buttonHover.png') no-repeat 0 0/100% 100%;
+			opacity: 1;
+			// background:url('../../../static/image/buttonHover.png') no-repeat 0 0/100% 100%;
+		}
+		&.del{
+			span{
+				color:red;
+			}
+			background:url('../../../static/image/delete.png') no-repeat 0 0/100% 100%;
+			&:hover{
+				opacity: 1;
+				// background:url('../../../static/image/deleteHover.png') no-repeat 0 0/100% 100%;
+			}
 		}
 	}
 }
@@ -82,10 +99,12 @@ button{
 	// background-color:transparent;
 	background:url('../image/header/usertop.png') no-repeat scroll 0 0/100% 13px content-box padding-box,
 			   url('../image/header/userbotton.png') no-repeat scroll 0 bottom/100% 13px content-box padding-box;
-	.ivu-dropdown-menu{
+	.ivu-dropdown-menu,.ivu-select-dropdown-list{
 		margin: 13px 0;
 		background:url('../image/header/usermiddle.png') repeat-y scroll 0 0/100% 100% content-box padding-box;
-		.ivu-dropdown-item{
+		li{
+			color:#fff;
+		    margin: 0px 10px;
 			margin: 0 10px;
 			&:hover{
 				background-color: rgba(68,111,106,.8);
@@ -116,6 +135,11 @@ button{
 		color:#fff;
 		&:hover{
 			background-color: #6b7777;
+		}
+	}
+	.ivu-tree-title-selected{
+		&:hover{
+			background-color:$color;
 		}
 	}
 	.ivu-icon-ios-folder-outline:before{

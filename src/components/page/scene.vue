@@ -12,7 +12,7 @@
       </div>
       <div class="flex container layout-column">
         <div class="flex">
-          <Tree :data="sceneTree" show-checkbox></Tree>
+          <Tree @on-select-change="sceneChange" :data="sceneTree"></Tree>
         </div>
         <div>
           <Table class="flex layout-column" :show-header='false' stripe :columns="sceneCol" :data="sceneData"></Table>
@@ -20,18 +20,22 @@
       </div>
     </div>
     <!-- 中 -->
-    <div class="middle containbox flex">
+    <div class="middle containbox flex-58">
       <div>
         <div class="contain-head">
           <h3>场景搭载</h3>
         </div>
       </div>
-      <div class="flex container">
-        <div>
+      <div class="flex container layout-column">
+        <div class="flex-60 layout-column">
           <div class="title">群、搭载关系</div>
+          <div id="d3" class="flex"></div>
         </div>
-        <div>
-          <Table class="flex layout-column" :show-header='false' stripe :columns="sceneCol" :data="sceneData"></Table>
+        <div class="flex layout-column">
+          <div class="title">参数设置</div>
+          <div class="flex layout-column">
+            <Table class="flex layout-column" :show-header='false' stripe :columns="paramsCol" :data="paramsData"></Table>
+          </div>
         </div>
       </div>
     </div>
@@ -40,14 +44,18 @@
       <div class="contain-head">
         <h3>模型库</h3>
       </div>
-      <div class="flex container">
-        
+      <div class="flex container layout-column">
+        <div class="flex">
+          <Tree class="flex layout-column" :data="mxTree"></Tree>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {drawforce} from '@/assets/js/d3.force.js'
+
 export default {
   data () {
     return {
@@ -56,26 +64,64 @@ export default {
         {
             title: '',
             sortable: true,
-            key: 'name'
+            key: 'key'
         },
         {
             title: '',
             sortable: true,
-            key: 'age'
+            key: 'value'
         }
       ],
       sceneData:[
         {
-            name: '场景编号',
-            age: 1,
+            key: '场景编号',
+            value: 1,
         },
         {
-            name: '场景名称',
-            age: '航母群',
+            key: '场景名称',
+            value: '航母群',
         },{
-            name: '创建时间',
-            age: '2018/01/05',
+            key: '创建时间',
+            value: '2018/01/05',
+        },{
+            key: '修改时间',
+            value: '2018/01/05',
+        }
+      ],
+      /*参数配置*/
+      paramsCol:[
+        {
+            title: '',
+            sortable: true,
+            key: 'key'
         },
+        {
+            title: '',
+            sortable: true,
+            key: 'value'
+        }
+      ],
+      paramsData:[
+        {
+            key: '编号',
+            value: 1,
+        },
+        {
+            key: '名称',
+            value: '航母群',
+        },{
+            key: '颜色',
+            value: '2018/01/05',
+        },{
+            key: '图标',
+            value: '2018/01/05',
+        },{
+            key: '侦察装备类型',
+            value: '2018/01/05',
+        },{
+            key: '侦察装备',
+            value: '2018/01/05',
+        }
       ],
       /*场景*/
       scene:'',
@@ -91,46 +137,41 @@ export default {
       {
           title: 'parent 1',
           expand: true,
-          render: (h, { root, node, data }) => {
-              return h('span', {
-                  style: {
-                      display: 'inline-block',
-                      width: '100%'
-                  }
-              }, [
-                  h('span', [
-                      h('Icon', {
-                          props: {
-                              type: 'ios-folder-outline'
-                          },
-                          style: {
-                              marginRight: '8px'
-                          }
-                      }),
-                      h('span', data.title)
-                  ]),
-                  h('span', {
-                      style: {
-                          display: 'inline-block',
-                          float: 'right',
-                          marginRight: '32px'
+          children: [
+              {
+                  title: 'child 1-1',
+                  expand: true,
+                  children: [
+                      {
+                          title: 'leaf 1-1-1',
+                          expand: true
+                      },
+                      {
+                          title: 'leaf 1-1-2',
+                          expand: true
                       }
-                  }, [
-                      h('Button', {
-                          props: Object.assign({}, this.buttonProps, {
-                              icon: 'ios-plus-empty',
-                              type: 'primary'
-                          }),
-                          style: {
-                              width: '52px'
-                          },
-                          on: {
-                              click: () => { this.append(data) }
-                          }
-                      })
-                  ])
-              ]);
-          },
+                  ]
+              },
+              {
+                  title: 'child 1-2',
+                  expand: true,
+                  children: [
+                      {
+                          title: 'leaf 1-2-1',
+                          expand: true
+                      },
+                      {
+                          title: 'leaf 1-2-1',
+                          expand: true
+                      }
+                  ]
+              }
+          ]
+      }],
+      mxTree:[
+      {
+          title: 'parent 1',
+          expand: true,
           children: [
               {
                   title: 'child 1-1',
@@ -169,17 +210,33 @@ export default {
     }
   },
   mounted(){
-    
+    this.drawForce();
   },
   methods:{
-   
+    drawForce(){
+      drawforce('d3');
+    },
+    sceneChange(data){
+      this.sceneChoose = data;
+    }
   }
 }
 </script>
+<!--
+   '<<<' 一般为scoped深度作用或'/deep/'
+   转化为：  .a[data-v-f3f3eg9] .b
+-->
 <style lang="scss" scoped>
   .scene{
+    justify-content: space-between;
     .middle{
-      margin:0 25px;
+      
+    }
+    //本业树拖拽样式
+    /deep/.ivu-tree-title{
+      -webkit-user-drag: element;
+      cursor: move;
+      -webkit-user-select: none;
     }
   }
 </style>

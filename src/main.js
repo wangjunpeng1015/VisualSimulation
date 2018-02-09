@@ -22,19 +22,25 @@ import './directive'//指令引用只能引用index.js名称（指令都写在�
 Vue.use(iview)
 Vue.use(Vuex)
 
-window.$ = $;
-Vue.config.productionTip = false
-Vue.prototype.$http = axios
 /*请求头配置*/
 // axios.defaults.timeout = 5000;//响应时间
 axios.defaults.headers.post['Content-Type'] = 'application/json';//配置请求头
+
 axios.defaults.baseURL = config.baseUrl;   //配置接口地址
 //POST传参序列化(添加请求拦截器)
 axios.interceptors.request.use((config) => {
 	//在发送请求之前做某件事
     iview.LoadingBar.start();
-    if(config.method  === 'post'){
-        // config.data = qs.stringify(config.data);
+    if(config.url.indexOf('?')>-1){
+      config.url = config.url+'&t='+(new Date().getTime());
+    }else{
+      config.url = config.url+'?t='+(new Date().getTime());
+    }
+    config.withCredentials = false;
+    if(config.method != 'post'){
+        config.data = qs.stringify(config.data);
+    }else{
+
     }
     return config;
 },(error) =>{
@@ -44,17 +50,27 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use((res) =>{
 	//对响应数据做些事
     iview.LoadingBar.finish()
-    if(!res.data.success){
-        return Promise.reject(res);
-    }
+    // if(!res.data.success){
+    //     return Promise.reject(res);
+    // }
     return res;
 }, (error) => {
     return Promise.reject(error);
 });
+
+window.$ = $;
+Vue.config.productionTip = false;
+Vue.prototype.$http = axios
+
 // 切换路由显示loadingbar
 router.beforeEach((to, from, next) => {
   iview.LoadingBar.start();
-  next()
+  //判断没有登录调到登录界面
+  // if(!sessionStorage.getItem('userInfo') && to.path!='/login'){
+  //   router.push('/login');
+  // }else{
+    next()
+  // }
 })
 
 router.afterEach((to, from, next) => {
