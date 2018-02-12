@@ -118,7 +118,12 @@ export const drawforce= function (id,nodes = nodess,links = linkss){
 	//单个节点组     
 	var singlegroup = nodegroup.selectAll('g')
 				  .data(nodes)
-	              .enter().append('g')
+	              .enter()
+ 	              .append('g')
+ 	              //给中间主要加上class'main'
+	              .classed("main", d=>{
+ 	              	return d.lx == '00';
+ 	              })
 
 	//单个节点中装备类型图片
     var node1 = singlegroup.append('image')
@@ -127,6 +132,7 @@ export const drawforce= function (id,nodes = nodess,links = linkss){
  	              }).attr("height",d=>{
  	              	return d.lx == '00'?equipUrl[d.lx].height:'50';
  	              })
+ 	              
  	              .attr('xlink:href', function(d) {
  					return equipUrl[d.lx].url;
 				  })
@@ -142,7 +148,13 @@ export const drawforce= function (id,nodes = nodess,links = linkss){
 					return picUrl[d.type].url;
 					  })
 	              .on("mouseover",function(d,i){  
-	                    console.log(d.name)  
+	                	console.log(d.name)  
+	                	console.log(d3.select(this).attr('width'))
+	                	// debugger
+	                	// d3.select(this).width()
+	              })
+	              .on("mouseout",d=>{
+	              	
 	              })
 	              .call(drag)
     //节点名称
@@ -191,4 +203,5 @@ export const drawforce= function (id,nodes = nodess,links = linkss){
 				return d.y + 40;
 			})
 	}
+	//添加节点更新
 }

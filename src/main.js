@@ -1,4 +1,4 @@
-/*这里是“@”相当于“../” */
+/*这里是“@”在build下设置的为相对路径 */
 import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
