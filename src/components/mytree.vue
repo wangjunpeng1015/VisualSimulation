@@ -1,5 +1,5 @@
 <template>
-    <div class="ivu-tree">
+    <div class="ivu-tree dragtree">
         <li :id='model.id' @click="toggle" draggable='true' @dragstart='dragStart($event,model)' @dragend='dragEnd'>
             <span v-show="model.children" :class="[isClicked ? 'nodeClicked' : '','ivu-icon ivu-icon-arrow-right-b']"></span>
             <span class='ivu-tree-title'>{{model.name}}</span>
@@ -193,6 +193,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.dragtree{
+    /deep/.ivu-tree-title{
+      -webkit-user-drag: element;
+      cursor: move;
+      -webkit-user-select: none;
+    }
+}
 li{
     list-style:none;
 }

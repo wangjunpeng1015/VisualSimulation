@@ -200,8 +200,7 @@ export default {
               id: 3
             }
           ]
-        }
-      ],
+        }],
       //当前点击树节点数据
       sceneChoose:[]
     }
@@ -229,11 +228,6 @@ export default {
     .middle{
       
     }
-    //本业树拖拽样式
-    /deep/.ivu-tree-title{
-      -webkit-user-drag: element;
-      cursor: move;
-      -webkit-user-select: none;
-    }
+    
   }
 </style>

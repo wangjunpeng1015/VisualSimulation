@@ -39,6 +39,24 @@ export default new Router({
       path: '/scene',
       name: 'scene',
       component: resolve => require(['@/components/page/scene.vue'], resolve) 
+    },
+    /*航迹规划*/
+    {
+      path: '/hjgh',
+      name: 'hjgh',
+      component: resolve => require(['@/components/page/hjgh.vue'], resolve) 
+    },
+    /*基础数据库*/
+    {
+      path: '/jcsjk',
+      name: 'jcsjk',
+      component: resolve => require(['@/components/page/jcsjk.vue'], resolve) 
+    },
+    /*任务规划*/
+    {
+      path: '/rwgh',
+      name: 'rwgh',
+      component: resolve => require(['@/components/page/rwgh.vue'], resolve) 
     }
   ]
 })

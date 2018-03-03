@@ -1,5 +1,10 @@
 /* input重置 */
 $color:#91FFFF;
+@mixin fontColor($middle:40%,$end:60%) {
+  background:-webkit-linear-gradient(top,#fff,#fff $middle,#81a7a7 $end,#115A5A);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 /* 统一样式清除 */
 // box-shadow
 .ivu-select-visible .ivu-select-selection{
@@ -148,5 +153,44 @@ button{
 		width:16px;
 		height: 12px;
 		background:url('../../../static/image/tree.png') no-repeat;
+	}
+}
+/* 时间轴样式重置 */
+.vis-timeline{
+	.vis-label .vis-inner{
+		@include fontColor;
+		font-size: 16px;
+		font-weight: bolder;
+	}
+	.vis-panel{
+		&.vis-left{
+			width:100px;
+		}
+	}
+	.vis-foreground .vis-group{
+		background:url('../image/dot.png') repeat-x center center;
+		&:before,&:after{
+			content:'';
+			width: 8px;
+			height: 9px;
+			display: inline-block;
+			position: absolute;
+			top:calc(50% - 4.5px);
+		}
+		&:before{
+			left: 0;
+			background:url('../image/dotHead.png') no-repeat center center;
+		}
+		&:after{
+			right:0;
+			background:url('../image/dotHead.png') no-repeat center center;
+		}
+	}
+	//消除样式
+	&.vis-timeline,.vis-group,.vis-label,.vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right,.vis-panel.vis-bottom, .vis-panel.vis-center, .vis-panel.vis-top,.vis-time-axis .vis-grid.vis-vertical{
+		border:none;
+	}
+	.vis-time-axis .vis-text{
+		color:$color;
 	}
 }

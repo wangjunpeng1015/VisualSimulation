@@ -11,8 +11,6 @@
 			<Table stripe :data="gridData" :columns="gridColumn"></Table>
 		</div>
    </div>
-   <!-- 时间轴 -->
-   <div id="timeline"></div>
    <!-- 菜单栏 -->
    <menulist :menus='menuList' @choosemenu="chooseMenu"></menulist>
   </div>
@@ -83,7 +81,7 @@ export default {
 	},
 	methods:{
 		init(){
-			this.initTimeLine();
+
 		},
 		/*选择导航*/
 		chooseNav(name){
@@ -93,36 +91,12 @@ export default {
 		chooseMenu(name){
 			alert(name)
 		},
-		/*时间轴初始化*/
-		initTimeLine(){
-			let container = document.getElementById('timeline');
-		  	// Create a DataSet (allows two way data-binding)
-			let items = new vis.DataSet([
-				{id: 1, content: 'item 1', start: '2013-04-20'},
-				{id: 2, content: 'item 2', start: '2013-04-14'},
-				{id: 3, content: 'item 3', start: '2013-04-18'},
-				{id: 4, content: 'item 4', start: '2013-04-16', end: '2013-04-19'},
-				{id: 5, content: 'item 5', start: '2013-04-25'},
-				{id: 6, content: 'item 6', start: '2013-04-27'}
-			]);
-		  	// Configuration for the Timeline
-			let options = {
-				locale: moment.locale('zh-cn'),//中文化
-			};
-			// Create a Timeline
-			let timeline = new vis.Timeline(container, items, options);
-		}
 	}
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
-	#timeline{
-		position: fixed;
-	    width: 100%;
-	    bottom: 0;
-	}
 	.grid-box{
 		position:fixed;
 		right:3%;
