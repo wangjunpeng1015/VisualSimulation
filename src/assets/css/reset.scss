@@ -121,10 +121,14 @@ button{
 	}
 }
 /* 下拉框重置 */
-.ivu-select{
+html .ivu-select-single{
 	color:#fff;
-	height:38px;
+	height:40px;
 	background:url("../../../static/image/input.png") no-repeat 0 0/100% 100%;
+	.ivu-select-selection, .ivu-select-selection .ivu-select-placeholder, .ivu-select-selection .ivu-select-selected-value,.ivu-select-selection .ivu-select-placeholder, .ivu-select-selection .ivu-select-selected-value{
+		height: 40px;
+		line-height: 40px;
+	}
 	.ivu-select-input{
 		color:#fff;
 	    padding: 5px 24px 0 8px;

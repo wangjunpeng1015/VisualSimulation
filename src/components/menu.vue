@@ -1,7 +1,7 @@
 <template>
 	<div class="menu layout-row">
 	   	<div class="menu-list">
-		   	<div v-show='showmenu' class="list layout-row" @click="chooseMenu(item.name)" v-for="(item,index) in menus">
+		   	<div v-show='showmenu' class="list layout-row" @click="chooseMenu(item.name,item.nm)" v-for="(item,index) in menus">
 		   		<div>{{item.name}}</div>
 		   	</div>
 	   	</div>
@@ -16,7 +16,7 @@ export default {
 	},
 	data () {
 		return {
-			showmenu:true//
+			showmenu:true
 		}
 	},
 	props:['menus'],
@@ -24,8 +24,10 @@ export default {
 
 	},
 	methods:{
-		chooseMenu(name){
+		chooseMenu(name,path){
 			this.$emit('choosemenu',name);
+			//跳转路由
+			this.$router.push(path);
 		}
 	}
 }
@@ -34,10 +36,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 	.menu{
-		height:300px;//避免点击时超出高度抖动
+		height:250px;//避免点击时超出高度抖动
 		position: fixed;
-		right: 100px;
-		bottom: 10%;
+		right: 3%;
+		bottom: 0;
 		.mainmenu{
 			width: 192px;
 			height: 196px;

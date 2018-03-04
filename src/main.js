@@ -9,6 +9,7 @@ import qs from 'qs'
 import axios from 'axios'
 import _ from 'lodash' //引入数据操作处理js
 import $ from 'jquery' //引入jquery
+import echarts from 'echarts' //引入jquery
 import config from '../static/config'//引入配置文件
 /*引用CSS样式*/
 import 'iview/dist/styles/iview.css'//引入iview的css文件
@@ -61,6 +62,7 @@ axios.interceptors.response.use((res) =>{
 window.$ = $;
 Vue.config.productionTip = false;
 Vue.prototype.$http = axios
+Vue.prototype.$echarts = echarts
 
 // 切换路由显示loadingbar
 router.beforeEach((to, from, next) => {

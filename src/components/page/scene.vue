@@ -20,7 +20,7 @@
       </div>
     </div>
     <!-- 中 -->
-    <div class="middle containbox flex-58">
+    <div class="containbox flex-58">
       <div>
         <div class="contain-head">
           <h3>场景搭载</h3>
@@ -225,9 +225,5 @@ export default {
 <style lang="scss" scoped>
   .scene{
     justify-content: space-between;
-    .middle{
-      
-    }
-    
   }
 </style>
