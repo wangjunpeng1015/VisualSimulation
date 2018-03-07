@@ -22,7 +22,7 @@ let nodeClicked = undefined   // Attention: 递归的所有组件共享同一个
 
 export default {
     name:'mytree',
-    data: function () {
+    data() {
         return {
             open: false,
             isClicked: false,
@@ -151,36 +151,45 @@ export default {
             e.dataTransfer.setData("nottext", e.target.innerHTML);
 
             console.log(params)
-            let drag = d3.drag()
-                  .on('start', (d) => {
-                    d3.event.sourceEvent.stopPropagation();
-                    if (!d3.event.active) {
-                       this.force.alphaTarget(0.3).restart();  // 当前alpha值为0，需设置alphaTarget让节点动起来
-                    }
-                    d.fx = d.x;
-                    d.fy = d.y;
-                  })
-                  .on('drag', d => {
-                    this.grabbing = true;
-                    d.fx = d3.event.x;
-                    d.fy = d3.event.y;
-                  })
-                  .on('end', d => {
-                    const nowTime = (new Date()).getTime();
-                    if (!d3.event.active) {
-                       this.force.alphaTarget(0);  // 让alpha目标值值恢复为默认值0
-                    }
-                    this.grabbing = false;
-                  });
+            // let drag = d3.drag()
+            //       .on('start', (d) => {
+            //         d3.event.sourceEvent.stopPropagation();
+            //         if (!d3.event.active) {
+            //            this.force.alphaTarget(0.3).restart();  // 当前alpha值为0，需设置alphaTarget让节点动起来
+            //         }
+            //         d.fx = d.x;
+            //         d.fy = d.y;
+            //       })
+            //       .on('drag', d => {
+            //         this.grabbing = true;
+            //         d.fx = d3.event.x;
+            //         d.fy = d3.event.y;
+            //       })
+            //       .on('end', d => {
+            //         const nowTime = (new Date()).getTime();
+            //         if (!d3.event.active) {
+            //            this.force.alphaTarget(0);  // 让alpha目标值值恢复为默认值0
+            //         }
+            //         this.grabbing = false;
+            //       });
+            var drag = d3.drag()
+                .on("drag", dragmove); 
+            function dragmove(d) {    
+                d3.select(this)  
+                  .attr("cx", d.cx = d3.event.x )  
+                  .attr("cy", d.cy = d3.event.y );  
+            } 
             //开始创建d3拖动
-            let node = d3.selectAll('svg').append('image')
-                        .attr("width",d=>{
-                            return 50;
-                          })
-                        .attr('xlink:href',d=>{
-                            return 'static/image/equipbox.png'
-                        })
-                        .call(drag)
+            let node = d3.selectAll('svg').append('image');
+
+            node.attr("width",d=>{
+                    return 50;
+                })
+                .attr('xlink:href',d=>{
+                    return 'static/image/equipbox.png'
+                })
+                .call(drag)
+
             return true
         },
         dragEnd(e) {
@@ -193,58 +202,58 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.dragtree{
-    /deep/.ivu-tree-title{
-      -webkit-user-drag: element;
-      cursor: move;
-      -webkit-user-select: none;
+    .dragtree{
+        /deep/.ivu-tree-title{
+          -webkit-user-drag: element;
+          cursor: move;
+          -webkit-user-select: none;
+        }
     }
-}
-li{
-    list-style:none;
-}
-.ivu-icon-arrow-right-b{
-    cursor:pointer;
-}
-.ivu-tree-children{
-    margin: 0;
-    padding: 0 0 0 18px;
-}
+    li{
+        list-style:none;
+    }
+    .ivu-icon-arrow-right-b{
+        cursor:pointer;
+    }
+    .ivu-tree-children{
+        margin: 0;
+        padding: 0 0 0 18px;
+    }
 
-.bold {
-    font-weight: bold;
-}
+    .bold {
+        font-weight: bold;
+    }
 
-.treeNodeText {
-    margin: 2px;
-    padding: 0.2rem 0.5rem;
-    width: fit-content;
-    font-size: 18px;
-    color: #324057;
-}
+    .treeNodeText {
+        margin: 2px;
+        padding: 0.2rem 0.5rem;
+        width: fit-content;
+        font-size: 18px;
+        color: #324057;
+    }
 
-.treeMargin {
-    margin-left: 2rem;
-}
+    .treeMargin {
+        margin-left: 2rem;
+    }
 
-.changeTree {
-    width: 1rem;
-    color: #324057;
-}
+    .changeTree {
+        width: 1rem;
+        color: #324057;
+    }
 
-.vue-drag-node-icon {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    padding-right: 3px;
-    border-left: 6px solid black;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    border-right: 0 solid yellow;
-    transition: transform .3s ease-in-out;
-}
+    .vue-drag-node-icon {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        padding-right: 3px;
+        border-left: 6px solid black;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-right: 0 solid yellow;
+        transition: transform .3s ease-in-out;
+    }
 
-.nodeClicked {
-    transform: rotate(90deg);
-}
+    .nodeClicked {
+        transform: rotate(90deg);
+    }
 </style>

@@ -15,10 +15,13 @@ $color:#91FFFF;
 	border:none;
 }
 .ivu-input{
+	height:40px;
+	background:url("../../../static/image/input.png") no-repeat 0 0/100% 100%;
+	border:none;
 	&:focus{
 		box-shadow:none;
 	}
-	color:$color;
+	color:#fff;
 }
 .ivu-form-item{
 	margin-bottom: 15px;
@@ -101,8 +104,23 @@ button{
 }
 /* 按钮下拉重置 */
 .ivu-select-dropdown{
+	// &:before{
+	// 	content:'';
+	// 	display: inline-block;
+	// 	width: 100%;
+	// 	height:13px;
+	// 	background:url('../image/header/usertop.png') no-repeat scroll 0 0/100% 13px content-box padding-box;
+	// }
+	// &:after{
+	// 	content:'';
+	// 	display: inline-block;
+	// 	width: 100%;
+	// 	height:13px;
+	// 	background:url('../image/header/userbotton.png') no-repeat scroll 0 bottom/100% 13px content-box padding-box;
+	// }
 	// background-color:transparent;
 	background:url('../image/header/usertop.png') no-repeat scroll 0 0/100% 13px content-box padding-box,
+				url('../image/header/usermiddle.png') no-repeat scroll 0 center/100% 100% content-box padding-box,
 			   url('../image/header/userbotton.png') no-repeat scroll 0 bottom/100% 13px content-box padding-box;
 	.ivu-dropdown-menu,.ivu-select-dropdown-list{
 		margin: 13px 0;
@@ -197,4 +215,51 @@ html .ivu-select-single{
 	.vis-time-axis .vis-text{
 		color:$color;
 	}
+}
+//tabs样式重置
+.ivu-tabs{
+	.ivu-tabs-bar{
+	height:36px;
+	border:none;
+		.ivu-tabs-nav-wrap{
+			margin-bottom: 0;
+		}
+		.ivu-tabs-nav{
+			display: flex;
+			align-items:center;
+			background:url('../../../static/image/tabcenter.png') repeat-x;
+			&:before{
+				display: inline-block;
+				width: 8px;
+				height: 48px;
+				background:url('../../../static/image/tableft.png') no-repeat;
+			}
+			&:after{
+				display: inline-block;
+				width: 8px;
+				height: 48px;
+				background:url('../../../static/image/tabright.png') no-repeat;
+			}
+			.ivu-tabs-tab{
+				border:1px solid #495962;
+				padding: 8px 30px;
+				margin: 0;
+				&:hover{
+					// color:#0c141c;
+				}
+				&.ivu-tabs-tab-active{
+					color:#0c141c;
+					background-color: #7edcdc;
+				}
+			}
+			.ivu-tabs-ink-bar{
+				height:0;
+			}
+		}
+	}
+}
+.ivu-btn{
+	border: none;
+	height: 40px;
+	background:url("../../../static/image/input.png") no-repeat 0 0/100% 100%;
 }

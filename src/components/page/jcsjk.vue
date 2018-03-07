@@ -1,27 +1,54 @@
 <template>
   <div class="jcsjk layout-row">
-    <div class="qq flex-75 layout-row">
-      <!-- 左 -->
-      <div class=" flex-70 layout-column">
-        <div class="flex-60 layout-column">
-          <Tabs value="name1" @on-click="changeCharts">
-            <TabPane label="标签一" name="name1"></TabPane>
-            <TabPane label="标签二" name="name2"></TabPane>
-            <TabPane label="标签三" name="name3"></TabPane>
-          </Tabs>
-          <div id="echart" class="flex"></div>
+    <div class="containbox-one flex-75">
+      <div class="layout-row">
+        <!-- 左 -->
+        <div class="container line flex-65 layout-column">
+          <div class="flex-60 layout-column">
+            <Tabs value="name1"  @on-click="changeCharts">
+              <TabPane label="标签一" name="name1"></TabPane>
+              <TabPane label="标签二" name="name2"></TabPane>
+              <TabPane label="标签三" name="name3"></TabPane>
+            </Tabs>
+            <div id="echart" class="flex"></div>
+          </div>
+          <div class="flex-40 layout-column"  style="overflow-y:auto">
+            <Tabs value="name1" on-click="gridChange">
+              <TabPane label="标签一" name="name1"></TabPane>
+              <TabPane label="标签二" name="name2"></TabPane>
+              <TabPane label="标签三" name="name3"></TabPane>
+            </Tabs>
+            <Table class="flex layout-column" :show-header='false' stripe :columns="gridCol" :data="gridData"></Table>
+          </div>
         </div>
-        <div class="flex-40 layout-column">
-          <Tabs value="name1" on-click="gridChange">
-            <TabPane label="标签一" name="name1"></TabPane>
-            <TabPane label="标签二" name="name2"></TabPane>
-            <TabPane label="标签三" name="name3"></TabPane>
-          </Tabs>
-          <Table class="flex layout-column" :show-header='false' stripe :columns="gridCol" :data="gridData"></Table>
+        <!-- 右 -->
+        <div class="container flex-35 layout-column">
+          <div class="sm-modal">
+            <h3 class="title">信息数据导入</h3>
+            <div class="containt">
+              <div class="nr">
+                <div class="layout-row nr-box">
+                   <Select v-model="import1" style="width:200px">
+                      <Option v-for="item in importList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                  </Select>
+                </div>
+                <div class="layout-row nr-box">
+                  <DatePicker type="date" placeholder="选择日期" style="width: 200px"></DatePicker>日期
+                </div>
+                <div class="layout-row nr-box">
+                   <Upload :before-upload="upload">
+                      <Button type="ghost" icon="ios-cloud-upload-outline">浏览</Button>
+                  </Upload>
+                  <div class="buttons">
+                    <!-- <Button class="btn" @click="remove(gridSelected)">浏览</Button> -->
+                    <Button class="btn" @click="remove(gridSelected)">导入</Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- 右 -->
-      <div class=" flex-30"></div>
     </div>
     <!-- 菜单栏 -->
     <menulist :menus='menusList'></menulist>
@@ -65,6 +92,35 @@ export default {
             value: '2018/01/05',
         }
       ],
+      import1:'',
+      importList:[{
+        label:'场景1',
+        value:'scen1'
+      },{
+        label:'场景2',
+        value:'scen2'
+      },{
+        label:'场景2',
+        value:'scen2'
+      },{
+        label:'场景2',
+        value:'scen2'
+      },{
+        label:'场景2',
+        value:'scen2'
+      },{
+        label:'场景2',
+        value:'scen2'
+      },{
+        label:'场景2',
+        value:'scen2'
+      },{
+        label:'场景2',
+        value:'scen2'
+      },{
+        label:'场景2',
+        value:'scen2'
+      }],
       /*右下角菜单数据*/
       menusList:[
         {name:'主页',nm:'main'},
@@ -81,9 +137,6 @@ export default {
     changeCharts(name){
        let myChart = this.$echarts.init(document.getElementById('echart'));
       let option = {
-          title: {
-              text: '堆叠区域图'
-          },
           tooltip : {
               trigger: 'axis',
               axisPointer: {
@@ -93,14 +146,9 @@ export default {
                   }
               }
           },
-          legend: {
-              data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
-          },
-          toolbox: {
-              feature: {
-                  saveAsImage: {}
-              }
-          },
+          // legend: {
+          //     data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+          // },
           grid: {
               left: '3%',
               right: '4%',
@@ -124,11 +172,23 @@ export default {
                   name:'邮件营销',
                   type:'line',
                   stack: '总量',
-                  areaStyle: {normal: {}},
+                  symbol:'circle',
+                  areaStyle: {
+                    normal: {
+                       color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                           offset: 0,
+                           color: 'rgba(40, 182, 252, 0.85)'
+                       }, {
+                           offset: 1,
+                           color: 'rgba(28, 159, 255, 0.2)'
+                       }])
+                    }
+                  },
                   data:[120, 132, 101, 134, 90, 230, 210]
               },
               {
                   name:'联盟广告',
+                  symbol:'circle',
                   type:'line',
                   stack: '总量',
                   areaStyle: {normal: {}},
@@ -136,6 +196,7 @@ export default {
               },
               {
                   name:'视频广告',
+                  symbol:'circle',
                   type:'line',
                   stack: '总量',
                   areaStyle: {normal: {}},
@@ -143,6 +204,7 @@ export default {
               },
               {
                   name:'直接访问',
+                  symbol:'circle',
                   type:'line',
                   stack: '总量',
                   areaStyle: {normal: {}},
@@ -150,6 +212,7 @@ export default {
               },
               {
                   name:'搜索引擎',
+                  symbol:'circle',
                   type:'line',
                   stack: '总量',
                   label: {
@@ -169,6 +232,11 @@ export default {
     //表格数据切换
     gridChange(name){
 
+    },
+    //上传文件
+    upload(file){
+      debugger
+      return false;
     }
   }
 }
@@ -180,8 +248,11 @@ export default {
 <style lang="scss" scoped>
   .jcsjk{
     justify-content:center;
-    .qq{
-      background-color:green;
+    .containbox-one{
+
+    }
+    .sm-modal{
+      margin:0 10%;
     }
   }
 </style>
