@@ -9,6 +9,7 @@ import qs from 'qs'
 import axios from 'axios'
 import _ from 'lodash' //引入数据操作处理js
 import $ from 'jquery' //引入jquery
+import * as d3 from 'd3'//引入d3
 import echarts from 'echarts' //引入jquery
 import config from '../static/config'//引入配置文件
 /*引用CSS样式*/
@@ -60,6 +61,7 @@ axios.interceptors.response.use((res) =>{
 });
 
 window.$ = $;
+window.d3 = d3;
 Vue.config.productionTip = false;
 Vue.prototype.$http = axios
 Vue.prototype.$echarts = echarts

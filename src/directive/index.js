@@ -42,3 +42,83 @@ Vue.directive('drag', {
 	  }
   }
 })
+//拖拽树
+Vue.directive('dragTree', {
+  inserted(el,binding,vnode,oldVnode){ //inserted 钩子函数:当元素被插入父元素时触发,可省略
+	  let oDiv=el; //el --> 触发的DOM元素
+	  //定义拖拽数据
+	  let tempNode, tempData, dragStarted;
+      d3.select(el).selectAll('.ivu-tree-title').call(d3.drag()
+          .on("start", function(d) {
+
+              tempNode = getTempNode();
+              // d = tempData;
+
+              dragStarted = true;
+
+              d3.event.sourceEvent.stopPropagation();
+          })
+          .on("drag", function(d) {
+              // d = tempData;
+              // var svgGroupOffset = {
+              //     'x': parseInt(svgGroup.attr('transform').split('(')[1].split(')')[0].split(',')[0], 10),
+              //     'y': parseInt(svgGroup.attr('transform').split('(')[1].split(')')[0].split(',')[1], 10),
+              //     'scale': zoomListener.scale()
+              // }
+              // tempNode.style('opacity', 1);
+              var newNode = tempNode._groups[0][0];
+
+              // if (dragStarted) {
+              //     domNode = newNode;
+              //     initiateDrag(d, domNode);
+              // }
+              // get coords of mouseEvent relative to svg container to allow for panning
+              var relCoords = d3.mouse($('svg').get(0));
+              let x = relCoords[0];
+              let y = relCoords[1];
+              var node = d3.select(newNode);
+              node.attr("x", x).attr('y',y);
+              // node.attr("transform", "translate(" + (d.x0 - svgGroupOffset.x)/svgGroupOffset.scale + "," + (d.y0 - svgGroupOffset.y)/svgGroupOffset.scale + ")");
+              // updateTempConnector(true);
+          })
+          .on("end", function(d) {
+              
+          }));
+		
+
+	  function getTempData(d) {
+	      return {
+	          "name": d.name,
+	          "type": d.type,
+	          //"dataType": d.dataType,
+	          "x0": 0,
+	          "y0": 0,
+	          "depth": 0,
+	          "x": 0,
+	          "y": 0,
+	          // "id": d.id,
+	          "id":totalNodes++,
+	          "parent": root,
+	          "appType": d.appType,
+	          "appData": d.appData,
+	          "contains":d.contains,
+	          "move":d.move,
+	          "edit":d.edit,
+	          "delete":d.delete,
+	          "yslx":d.yslx
+	      }
+	  }
+	  function getTempNode(type) {
+	      var g = d3.select('svg').select('.nodes')
+	      	  .append('g')
+	          .data([{ name: "大鹏",type:'01',lx:'03'}])
+
+	      let node = g.append('image')
+	      		.attr('width',)
+	        	.attr('xlink:href',d=>{
+                	return 'static/image/equipbox.png'
+            	})
+	      return node;
+	  }
+  }
+})

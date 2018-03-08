@@ -1,6 +1,6 @@
 <template>
     <div class="ivu-tree dragtree">
-        <li :id='model.id' @click="toggle" draggable='true' @dragstart='dragStart($event,model)' @dragend='dragEnd'>
+        <li :id='model.id' @click="toggle" draggable='true' @dragstart='dragStart($event,model)' @drag='draging($event,model)' @dragend='dragEnd'>
             <span v-show="model.children" :class="[isClicked ? 'nodeClicked' : '','ivu-icon ivu-icon-arrow-right-b']"></span>
             <span class='ivu-tree-title'>{{model.name}}</span>
         </li>
@@ -27,7 +27,9 @@ export default {
             open: false,
             isClicked: false,
             styleObj: {
-            }
+            },
+            //是否在拖动
+            isDrag:false
         }
     },
     props: {
@@ -144,43 +146,29 @@ export default {
             }
             return that
         },
-
         dragStart(e,params) {
+            let ins = this;
             // fromData = this.model
             e.dataTransfer.effectAllowed = "move";
             e.dataTransfer.setData("nottext", e.target.innerHTML);
 
-            console.log(params)
-            // let drag = d3.drag()
-            //       .on('start', (d) => {
-            //         d3.event.sourceEvent.stopPropagation();
-            //         if (!d3.event.active) {
-            //            this.force.alphaTarget(0.3).restart();  // 当前alpha值为0，需设置alphaTarget让节点动起来
-            //         }
-            //         d.fx = d.x;
-            //         d.fy = d.y;
-            //       })
-            //       .on('drag', d => {
-            //         this.grabbing = true;
-            //         d.fx = d3.event.x;
-            //         d.fy = d3.event.y;
-            //       })
-            //       .on('end', d => {
-            //         const nowTime = (new Date()).getTime();
-            //         if (!d3.event.active) {
-            //            this.force.alphaTarget(0);  // 让alpha目标值值恢复为默认值0
-            //         }
-            //         this.grabbing = false;
-            //       });
-            var drag = d3.drag()
-                .on("drag", dragmove); 
-            function dragmove(d) {    
-                d3.select(this)  
-                  .attr("cx", d.cx = d3.event.x )  
-                  .attr("cy", d.cy = d3.event.y );  
-            } 
+            ins.isDrag = true;
+
             //开始创建d3拖动
-            let node = d3.selectAll('svg').append('image');
+            let node = d3.select('image').call(d3.drag()
+                  .on('start', function (d) {
+                        d.fx = d.x;
+                        d.fy = d.y;
+                        d3.event.sourceEvent.stopPropagation();
+                    })
+                  .on('drag', function (d) {
+                        d.fx = d3.event.x;
+                        d.fy = d3.event.y;
+                    })
+                  .on('end', function (d) {
+                        d.fx = null;
+                        d.fy = null;
+                    }));
 
             node.attr("width",d=>{
                     return 50;
@@ -189,14 +177,22 @@ export default {
                     return 'static/image/equipbox.png'
                 })
                 .call(drag)
+                .on('click',d=>{
+                            alert(111)
+                        })
 
             return true
         },
+        draging(e,params){
+        },
         dragEnd(e) {
+            this.isDrag = false;
             fromData = undefined
             toData = undefined
             fromParentModelChildren = undefined
         },
+        //给树添加d3拖拽事件
+        
     },
 }
 </script>

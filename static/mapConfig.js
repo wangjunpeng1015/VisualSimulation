@@ -2,6 +2,8 @@ const config = require('../static/config')//引入配置文件
 const iconUrl = {
   tower:'static/image/map/tower.png'
 }
+const json = require('../static/planjson.json')
+
 function initMap(id){
   let view = new ol.View({   // 视图
     center:ol.proj.transform([104.06667, 30.66667], 'EPSG:4326', 'EPSG:3857'),// 设置地图中心坐标点
@@ -62,7 +64,6 @@ function initMap(id){
   function formatLonLat(array){
     return ol.proj.transform([array[0], array[1]], 'EPSG:4326', 'EPSG:3857');
   };
-  let jd = 70,wd=15;
   var objInstance = {
     map,
     /*画动线条*/
@@ -217,36 +218,117 @@ function initMap(id){
       addRandomFeature();
     },
     /*画飞机移动*/
-    DrawAirplan(){
-      var headOuterImageStyle = new ol.style.Style({
-         image: new ol.style.Circle({
-            radius: 7,
-            snapToPixel: false,
-            fill: new ol.style.Fill({color: 'red'}),
-            stroke: new ol.style.Stroke({
-              color: 'white', width: 2
-            })
-          })
+    DrawAirplan(data){
+      
+      var routeCoords = json;
+      var routeLength = routeCoords.length;
+      //飞机
+      var geoMarker = new ol.Feature({
+        type: 'geoMarker',
+        geometry: new ol.geom.Point(routeCoords[0])
+      });
+      //起点
+      var startMarker = new ol.Feature({
+        type: 'icon',
+        geometry: new ol.geom.Point(routeCoords[0])
+      });
+      //终点
+      var endMarker = new ol.Feature({
+        type: 'icon',
+        geometry: new ol.geom.Point(routeCoords[routeLength - 1])
       });
 
-      map.on('postcompose', function(event) {
+      var styles = {
+        'route': new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            width: 6, color: [237, 212, 0, 0.8]
+          })
+        }),
+        'icon': new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            src: 'https://openlayers.org/en/v4.6.4/examples/data/icon.png'
+          })
+        }),
+        'geoMarker': new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0, 0],
+            src: 'static/image/plan.png',
+          })
+        })
+      };
+
+      var animating = false;
+      var speed, now;
+
+      var vectorLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          features: [ geoMarker, startMarker, endMarker]
+        }),
+        style: function(feature) {
+          // hide geoMarker if animation is active
+          if (animating && feature.get('type') === 'geoMarker') {
+            return null;
+          }
+          return styles[feature.get('type')];
+        }
+      });
+      map.addLayer(vectorLayer);
+
+      var moveFeature = function(event) {
         var vectorContext = event.vectorContext;
         var frameState = event.frameState;
-        var now = frameState.time;
-        var coordinates=[];
-        if(jd>180) jd=70;
-        if(wd>90) wd=15;
-        coordinates.push(formatLonLat([jd++,wd++]));
 
-        vectorContext.drawGeometry(new ol.geom.MultiPoint(coordinates));
+        if (animating) {
+          var elapsedTime = frameState.time - now;
+          // here the trick to increase speed is to jump some indexes
+          // on lineString coordinates
+          var index = Math.round(speed * elapsedTime / 1000);
 
-        var headPoint = new ol.geom.Point(coordinates[coordinates.length - 1]);
-        var feature = new ol.Feature(headPoint);
-        vectorContext.drawFeature(feature,headOuterImageStyle);
+          if (index >= routeLength) {
+            stopAnimation(true);
+            return;
+          }
 
-        map.render();//循环触发动起来
-      });
-      map.render();//初始化动起来
+          var currentPoint = new ol.geom.Point(routeCoords[index]);
+          var feature = new ol.Feature(currentPoint);
+          vectorContext.drawFeature(feature, styles.geoMarker);
+        }
+        // tell OpenLayers to continue the postcompose animation
+        map.render();
+      };
+
+      function startAnimation() {
+        if (animating) {
+          stopAnimation(false);
+        } else {
+          animating = true;
+          now = new Date().getTime();
+          speed = 10;
+          // hide geoMarker
+          geoMarker.setStyle(null);
+          // just in case you pan somewhere else
+          map.on('postcompose', moveFeature);
+          map.render();
+        }
+      }
+
+      /**
+       * @param {boolean} ended end of animation.
+       */
+      function stopAnimation(ended) {
+        animating = false;
+
+        // if animation cancelled set the marker at the beginning
+        var coord = ended ? routeCoords[routeLength - 1] : routeCoords[0];
+        /** @type {ol.geom.Point} */ (geoMarker.getGeometry())
+            .setCoordinates(coord);
+        //remove listener
+        map.un('postcompose', moveFeature);
+      }
+
+      startAnimation();
+
     },
     /*地图飞到某点*/
     mapFly(position,callback={}){
@@ -294,7 +376,7 @@ function initMap(id){
       });
       iconFeature.setStyle(createLabelStyle(iconFeature));
       let vectorSource = new ol.source.Vector({
-        features:[iconFeature,iconFeatures]
+        features:[iconFeature]
       });
       let staticLayer = new ol.layer.Vector({
         source:vectorSource

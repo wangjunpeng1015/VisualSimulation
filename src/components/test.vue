@@ -1,15 +1,6 @@
 <template>
   <div class="main">
-    <!-- <div id="timeline"></div>
-    <input type="text" :value="message">
-    <p>{{message}}</p>
-        直接在模板中绑定表达式
-    	<p>{{message.split('').reverse().join('')}}</p>
-        //运用计算属性
-    <p>{{reverseMessage}}</p>
-        //运用methods方式
-    <p>{{methodMessage()}}</p> -->
-    
+<!-- 
     <div id='menu'>
     	<label for="qq" class="checkbox">
     		<input id='qq' type="radio" name='label' value='vector' checked='checked'>Vector Labels
@@ -20,7 +11,8 @@
     </div>
     <div id='label' style="display:none"></div>
     <div id="marker" class='marker' title='marker'>123
-    </div>
+    </div> -->
+
   </div>
 </template>
 
@@ -101,7 +93,6 @@ export default {
 		},
 		map(){
 			// mainmap.initMap(document.getElementById('map'));
-			
 		},
 		initTimeLine(){
 			let container = document.getElementById('timeline');
@@ -122,9 +113,9 @@ export default {
 			// Create a Timeline
 			let timeline = new vis.Timeline(container, items, options);
 		},
-		 methodMessage:function () {
-                    return this.message.split('').reverse().join('');
-                }
+		methodMessage:function () {
+            return this.message.split('').reverse().join('');
+        }
 	}
 }
 </script>

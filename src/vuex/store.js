@@ -9,7 +9,7 @@ const store = new Vuex.Store({
   state: JSON.parse(userInfo) || {
                   username:'',
                   authority:0,
-                  isLogin:false
+                  isLogin:true
                 },
   //改变 state 的一些方法
   mutations:{

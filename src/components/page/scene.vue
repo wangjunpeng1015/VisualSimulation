@@ -29,7 +29,7 @@
       <div class="flex container layout-column">
         <div class="flex-65 layout-column">
           <div class="title">群、搭载关系</div>
-          <div id="d3" class="flex"></div>
+          <div id="d3box" class="flex"></div>
         </div>
         <div class="flex layout-column">
           <div class="title">参数设置</div>
@@ -46,8 +46,8 @@
       </div>
       <div class="flex container layout-column">
         <div class="flex">
-          <mytree v-for="menuItem in mxTree" :model="menuItem"></mytree>
-          <!-- <Tree class="flex layout-column" :data="mxTree"></Tree> -->
+          <!-- <mytree v-for="menuItem in mxTree" :model="menuItem"></mytree> -->
+          <Tree class="flex layout-column" v-dragTree:data='mxTree' :data="mxTree"></Tree>
         </div>
       </div>
     </div>
@@ -162,45 +162,31 @@ export default {
               }
           ]
       }],
-      mxTree:[{
-          name: 'Root',
-          id: 0,
+      mxTree:[
+      {
+          title: 'parent 1',
+          expand: true,
           children: [
-            {
-              name: 'Node 1-1',
-              id: 1,
-              children: [
-                {
-                  name: 'Node 2-1',
-                  id: 2
-                }
-              ]
-            },
-            {
-              name: 'Node 1-2',
-              id: 3
-            }
+              {
+                  title: 'child 1-1',
+                  expand: true,
+                  children: [
+                      {
+                          title: 'leaf 1-1-1',
+                          expand: true
+                      },
+                      {
+                          title: 'leaf 1-1-2',
+                          expand: true
+                      }
+                  ]
+              },
+              {
+                  title: 'child 1-2',
+                  expand: true,
+              }
           ]
-        },{
-          name: 'Root',
-          id: 0,
-          children: [
-            {
-              name: 'Node 1-1',
-              id: 1,
-              children: [
-                {
-                  name: 'Node 2-1',
-                  id: 2
-                }
-              ]
-            },
-            {
-              name: 'Node 1-2',
-              id: 3
-            }
-          ]
-        }],
+      }],
       //当前点击树节点数据
       sceneChoose:[]
     }
@@ -210,7 +196,7 @@ export default {
   },
   methods:{
     drawForce(){
-      drawforce('d3');
+      drawforce('d3box');
     },
     sceneChange(data){
       this.sceneChoose = data;

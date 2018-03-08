@@ -356,6 +356,7 @@
           height: inherit;
           border:none;
           box-shadow: none;
+          background:none;
         }
       }
     }

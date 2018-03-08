@@ -61,10 +61,9 @@ export default {
 			],
 			/*nav导航数据*/
 			navs:[
-				{name:'模型管理',icon:''},
-				{name:'任务规则',icon:''},
-				{name:'航迹规划',icon:''},
-				{name:'战技性能',icon:''}
+				{name:'场景设置',nm:'scene'},
+				{name:'任务规划',nm:'rwgh'},
+				{name:'航迹规划',nm:'hjgh'}
 			],
 			/*右下角菜单数据*/
 			menuList:[
@@ -85,11 +84,9 @@ export default {
 		},
 		/*选择导航*/
 		chooseNav(name){
-			alert(name)
 		},
 		/*选择菜单*/
 		chooseMenu(name){
-			alert(name)
 		},
 	}
 }

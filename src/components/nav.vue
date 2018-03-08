@@ -4,7 +4,7 @@
 			<h3 class="title">{{title}}</h3>
 		</div>
     	<ul class="nav-containt layout-column">
-    		<li v-for="item in menus" @click="chooseNav(item.name)">
+    		<li v-for="item in menus" @click="chooseNav(item.name,item.nm)">
     			<p>{{item.name}}</p>
     		</li>
     	</ul>
@@ -26,8 +26,10 @@ export default {
 
 	},
 	methods:{
-		chooseNav(name){
+		chooseNav(name,path){
 			this.$emit('choosenav',name);
+			//跳转路由
+			this.$router.push(path);
 		}
 	}
 }
