@@ -43,5 +43,4 @@ export default {
 		top: 25%;
 		width:246px;
 	}
-	
 </style>

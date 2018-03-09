@@ -252,7 +252,7 @@ function initMap(id){
         }),
         'geoMarker': new ol.style.Style({
           image: new ol.style.Icon({
-            anchor: [0, 0],
+            anchor: [0.5, 5],
             src: 'static/image/plan.png',
           })
         })

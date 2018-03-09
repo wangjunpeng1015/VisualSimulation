@@ -63,8 +63,8 @@ a{
   	>.flex-#{$i} {
       min-width: 100%;
       max-height: $i+%;
-  		// flex:$i 0 $i+%;
-      flex:0 0 $i+%; 
+  		flex:$i 0 $i+%;
+      // flex:0 0 $i+%; 
   	} 
   }
 }

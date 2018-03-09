@@ -80,6 +80,30 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from, next) => {
   iview.LoadingBar.finish();
 })
+/*获取公用数据存入session*/
+function getDatabase(){
+  axios.get('/CountryArea/GetTree').then(res=>{
+    // let data = JSON.stringify(res.data);
+    // sessionStorage.setItem('contry',data);
+    function newdata(data){
+      data.forEach(item=>{
+        item.label=item.title;
+        item.value=item.Code;
+        delete item.title;
+        delete item.Code;
+        if(item.children){
+          newdata(item.children)
+        }
+      })
+    }
+    newdata(res.data)
+    debugger
+    Vue.prototype.$baseData = res.data;
+  },err=>{
+    // iview.$Notice.error({desc: '删除失败！'});
+  })
+}
+getDatabase();
 /*创建websocket*/
 Vue.prototype.ws = (function(){
   let ws = new WebSocket(config.wsUrl);

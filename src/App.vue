@@ -47,7 +47,7 @@ export default {
   	>div:nth-child(2){
         position: relative;
         z-index: 99;
-        &:not(.main):not(.login){
+        &:not(.main):not(.login):not(.scene){
           height:100%;
           padding:130px 40px 20px 40px;
         }

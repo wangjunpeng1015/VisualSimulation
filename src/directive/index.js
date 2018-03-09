@@ -23,7 +23,7 @@ import * as d3 from 'd3'
 // oldVnode:上一个虚拟节点，仅在 update 和 componentUpdated 钩子中可用。
 /*拖拽移动元素指令*/
 Vue.directive('drag', {
-  inserted:function(el,binding,vnode,oldVnode){ //inserted 钩子函数:当元素被插入父元素时触发,可省略
+  inserted(el,binding,vnode,oldVnode){ //inserted 钩子函数:当元素被插入父元素时触发,可省略
 	  let oDiv=el; //el --> 触发的DOM元素
 	  oDiv.style.position = 'fixed';
 	  oDiv.style.zIndex = '99';
@@ -44,47 +44,62 @@ Vue.directive('drag', {
 })
 //拖拽树
 Vue.directive('dragTree', {
-  inserted(el,binding,vnode,oldVnode){ //inserted 钩子函数:当元素被插入父元素时触发,可省略
+  componentUpdated(el,binding,vnode,oldVnode){ //inserted 钩子函数:当元素被插入父元素时触发,可省略
 	  let oDiv=el; //el --> 触发的DOM元素
 	  //定义拖拽数据
-	  let tempNode, tempData, dragStarted;
-      d3.select(el).selectAll('.ivu-tree-title').call(d3.drag()
-          .on("start", function(d) {
+	  //数据，d3节点，开始拖拽，鼠标相对dom位置
+	  let tempNode, tempData, dragStarted, relCoords;
+	  //判断是拖动到地球还是场景搭载
+	  let newScene = binding.value;
+	  setTimeout(()=>{
+	  	debugger
+	      d3.select(el).selectAll('.ivu-tree-title').call(d3.drag()
+	          .on("start", function(d) {
+	              tempNode = getTempNode();
+	              // d = tempData;
+	              console.log(newScene)
+	              dragStarted = true;
 
-              tempNode = getTempNode();
-              // d = tempData;
+	              d3.event.sourceEvent.stopPropagation();
+	          })
+	          .on("drag", function(d) {
+	              // d = tempData;
+	              // var svgGroupOffset = {
+	              //     'x': parseInt(svgGroup.attr('transform').split('(')[1].split(')')[0].split(',')[0], 10),
+	              //     'y': parseInt(svgGroup.attr('transform').split('(')[1].split(')')[0].split(',')[1], 10),
+	              //     'scale': zoomListener.scale()
+	              // }
+	              // tempNode.style('opacity', 1);
+	              var newNode = tempNode._groups[0][0];
 
-              dragStarted = true;
+	              // if (dragStarted) {
+	              //     domNode = newNode;
+	              //     initiateDrag(d, domNode);
+	              // }
+	              // get coords of mouseEvent relative to svg container to allow for panning
+	              relCoords = d3.mouse($('svg').get(0));
+	              let x = relCoords[0];
+	              let y = relCoords[1];
+	          	  console.log(x,y)
 
-              d3.event.sourceEvent.stopPropagation();
-          })
-          .on("drag", function(d) {
-              // d = tempData;
-              // var svgGroupOffset = {
-              //     'x': parseInt(svgGroup.attr('transform').split('(')[1].split(')')[0].split(',')[0], 10),
-              //     'y': parseInt(svgGroup.attr('transform').split('(')[1].split(')')[0].split(',')[1], 10),
-              //     'scale': zoomListener.scale()
-              // }
-              // tempNode.style('opacity', 1);
-              var newNode = tempNode._groups[0][0];
-
-              // if (dragStarted) {
-              //     domNode = newNode;
-              //     initiateDrag(d, domNode);
-              // }
-              // get coords of mouseEvent relative to svg container to allow for panning
-              var relCoords = d3.mouse($('svg').get(0));
-              let x = relCoords[0];
-              let y = relCoords[1];
-              var node = d3.select(newNode);
-              node.attr("x", x).attr('y',y);
-              // node.attr("transform", "translate(" + (d.x0 - svgGroupOffset.x)/svgGroupOffset.scale + "," + (d.y0 - svgGroupOffset.y)/svgGroupOffset.scale + ")");
-              // updateTempConnector(true);
-          })
-          .on("end", function(d) {
-              
-          }));
-		
+	              var node = d3.select(newNode);
+	              node.attr("x", x).attr('y',y);
+	              // node.attr("transform", "translate(" + (d.x0 - svgGroupOffset.x)/svgGroupOffset.scale + "," + (d.y0 - svgGroupOffset.y)/svgGroupOffset.scale + ")");
+	              // updateTempConnector(true);
+	          })
+	          .on("end", function(d) {
+	              //判断最后是否在场景中 不在删除
+	              let width = $('svg').width();
+	              let height = $('svg').height();
+	              var newNode = tempNode._groups[0][0];
+	              if(relCoords[0]>0 && relCoords[1]>0 && relCoords[0]<width && relCoords[1]<height){
+	              	console.log('对的')
+	              }else{
+	              	d3.select(newNode).remove()
+	              }
+	          }));
+			
+	  },200)
 
 	  function getTempData(d) {
 	      return {
@@ -109,12 +124,12 @@ Vue.directive('dragTree', {
 	      }
 	  }
 	  function getTempNode(type) {
-	      var g = d3.select('svg').select('.nodes')
+	      var g = d3.select('svg .nodes')
 	      	  .append('g')
 	          .data([{ name: "大鹏",type:'01',lx:'03'}])
 
 	      let node = g.append('image')
-	      		.attr('width',)
+	      		// .attr('width',)
 	        	.attr('xlink:href',d=>{
                 	return 'static/image/equipbox.png'
             	})

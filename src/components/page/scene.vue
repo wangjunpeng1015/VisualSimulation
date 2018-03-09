@@ -5,9 +5,11 @@
       <div>
         <div class="contain-head layout-row" style="align-items:center;justify-content: space-between;">
           <h3>场景模型列表</h3>
+          <Button class="btn" @click="addScene"><Icon type="plus-round"></Icon></Button>
           <Select v-model="scene" filterable style="width:150px">
             <Option v-for="item in scenes" :value="item.value" :key="item.value">{{item.label}}</Option>
           </Select>
+          <Cascader :data="contrys" trigger="hover"></Cascader>
         </div>
       </div>
       <div class="flex container layout-column">
@@ -20,7 +22,7 @@
       </div>
     </div>
     <!-- 中 -->
-    <div class="containbox flex-58">
+    <div class="containbox flex-58" :style="{top:showDz?'100%':''}">
       <div>
         <div class="contain-head">
           <h3>场景搭载</h3>
@@ -47,7 +49,7 @@
       <div class="flex container layout-column">
         <div class="flex">
           <!-- <mytree v-for="menuItem in mxTree" :model="menuItem"></mytree> -->
-          <Tree class="flex layout-column" v-dragTree:data='mxTree' :data="mxTree"></Tree>
+          <Tree class="flex layout-column" v-dragTree="showDz" :data="mxTree"></Tree>
         </div>
       </div>
     </div>
@@ -63,6 +65,8 @@ export default {
   },
   data () {
     return {
+      //显示搭载框
+      showDz:false,
       /*场景信息*/
       sceneCol:[
         {
@@ -130,11 +134,11 @@ export default {
       /*场景*/
       scene:'',
       scenes:[{
-        label:'场景1',
-        value:'scen1'
+        label:'中国',
+        value:'01'
       },{
-        label:'场景2',
-        value:'scen2'
+        label:'美国',
+        value:'02'
       }],
       /*场景树*/
       sceneTree: [
@@ -162,8 +166,34 @@ export default {
               }
           ]
       }],
-      mxTree:[
-      {
+      mxTree:[],
+      //当前点击树节点数据
+      sceneChoose:[],
+      contry:''
+    }
+  },
+  computed:{
+    contrys(){
+      return this.$baseData;
+    }
+  },
+  mounted(){
+    this.init();
+  },
+  methods:{
+    init(){
+      this.drawForce();
+      this.getmxTree();
+    },
+    drawForce(){
+      drawforce('d3box');
+    },
+    sceneChange(data){
+      this.sceneChoose = data;
+    },
+    //获取模型库数据
+    getmxTree(){
+      this.mxTree = [{
           title: 'parent 1',
           expand: true,
           children: [
@@ -186,20 +216,17 @@ export default {
                   expand: true,
               }
           ]
-      }],
-      //当前点击树节点数据
-      sceneChoose:[]
-    }
-  },
-  mounted(){
-    this.drawForce();
-  },
-  methods:{
-    drawForce(){
-      drawforce('d3box');
+      }]
+      this.$http.get('/Template/GetTree').then(res=>{
+        this.mxTree = res.data;
+      },err=>{
+
+        this.$Notice.error({desc: '获取模型库失败！'});
+      })
     },
-    sceneChange(data){
-      this.sceneChoose = data;
+    //添加场景
+    addScene(){
+      this.showDz = true;
     },
   }
 }
@@ -211,5 +238,23 @@ export default {
 <style lang="scss" scoped>
   .scene{
     justify-content: space-between;
+    >:nth-child(1){
+      width:20%;
+      left:40px;
+    }
+    >:nth-child(2){
+      width:calc(58% - 80px);
+      left:calc(21% + 40px);
+    }
+    >:nth-child(3){
+      width:20%;
+      right:40px;
+    }
+    .containbox{
+      position:fixed;
+      top:140px;
+      padding-bottom: 140px;
+      transition:all 1s linear;
+    }
   }
 </style>

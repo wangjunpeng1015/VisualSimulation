@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+// import picUrl from ''
 let nodess=[
         { name: "Adam",type:'00',lx:'00'},
         { name: "Bob",type:'01',lx:'01'},
@@ -79,8 +80,9 @@ export const drawforce= function (id,nodes = nodess,links = linkss){
 
 	var svg = d3.select("#"+id).append("svg")
 				.attr("width",width).attr("height",height)
-				.append('g')
-
+				
+	let groupG = svg.append('g')
+  
 	//拖拽
 	let drag = d3.drag()
 			  .on('start', function (d) {
@@ -104,16 +106,17 @@ export const drawforce= function (id,nodes = nodess,links = linkss){
 	                   .force('link', d3.forceLink(links).distance(200))//连接线长度
 	                   .force('center', d3.forceCenter(width / 2, height / 2))
 	//连接线
-	var link = svg.append('g')
+	var link = groupG.append('g')
 	              .attr('class', 'links')
 	              .selectAll('line')
 	              .data(links)
 	              .enter()
 	              .append('line')
 	              .attr('stroke', '#91FFFF')
-	              .attr('stroke-width', 1);
+	              .attr('stroke-width', 1)
+
 	//大节点组
-	var nodegroup = svg.append('g')
+	var nodegroup = groupG.append('g')
 	              .attr('class', 'nodes')
 	//单个节点组     
 	var singlegroup = nodegroup.selectAll('g')
