@@ -11,11 +11,14 @@
   </head>
   <body>
     <div id="app"></div>
+    <!-- 地球 -->
+    <!-- 放在app.vue里面缩放会产生经纬度偏差 -->
+    <div id="map" class="map" tabindex="0"></div>
     <!-- built files will be auto injected -->
     
+  <script type="text/javascript" src="./static/js/ol.js"></script><!-- openlayer的js -->
   <script type="text/javascript" src="./static/vis/moment-with-locales.min.js"></script>
   <script type="text/javascript" src="./static/vis/vis.js"></script>
-  <script type="text/javascript" src="./static/js/ol.js"></script><!-- openlayer的js -->
   <script type="text/javascript" src="./static/js/arc.js"></script><!-- openlayer的辅助arc.js -->
   </body>
 </html>

@@ -1,5 +1,8 @@
 import * as d3 from 'd3';
 // import picUrl from ''
+//图片地址json
+import equipUrl from '../../../static/baseUrl.json'
+ 
 let nodess=[
         { name: "Adam",type:'00',lx:'00'},
         { name: "Bob",type:'01',lx:'01'},
@@ -34,43 +37,6 @@ const picUrl = {
 		url:'static/image/equipbox.png',
 		width:'108',
 		height:'109'
-	},
-	aircraft:{
-		url:'static/image/equipbox.png',
-		width:'469',
-		height:'495'
-	}
-}
-const equipUrl = {
-	'00':{
-		url:'static/image/军舰.png',
-		width:'129',
-		height:'42'
-	},
-	'01':{
-		url:'static/image/数据链.png',
-		width:'86',
-		height:'60'
-	},
-	'02':{
-		url:'static/image/船1.png',
-		width:'79',
-		height:'22'
-	},
-	'03':{
-		url:'static/image/船2.png',
-		width:'89',
-		height:'23'
-	},
-	'04':{
-		url:'static/image/直升机.png',
-		width:'83',
-		height:'32'
-	},
-	'05':{
-		url:'static/image/塔康.png',
-		width:'156',
-		height:'106'
 	}
 }
 export const drawforce= function (id,nodes = nodess,links = linkss){

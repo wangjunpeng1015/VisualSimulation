@@ -9,7 +9,6 @@
           <Select v-model="scene" filterable style="width:150px">
             <Option v-for="item in scenes" :value="item.value" :key="item.value">{{item.label}}</Option>
           </Select>
-          <Cascader :data="contrys" trigger="hover"></Cascader>
         </div>
       </div>
       <div class="flex container layout-column">
@@ -48,8 +47,8 @@
       </div>
       <div class="flex container layout-column">
         <div class="flex">
-          <!-- <mytree v-for="menuItem in mxTree" :model="menuItem"></mytree> -->
-          <Tree class="flex layout-column" v-dragTree="showDz" :data="mxTree"></Tree>
+          <mytree class="flex layout-column" :other="showDz" v-for="menuItem in mxTree" :model="menuItem"></mytree>
+          <!-- <Tree class="flex layout-column" v-dragTree="showDz" :data="mxTree"></Tree> -->
         </div>
       </div>
     </div>
@@ -169,7 +168,9 @@ export default {
       mxTree:[],
       //当前点击树节点数据
       sceneChoose:[],
-      contry:''
+      contry:'',
+      //添加新场景数据
+      newSceneData:{}
     }
   },
   computed:{
@@ -217,16 +218,53 @@ export default {
               }
           ]
       }]
-      this.$http.get('/Template/GetTree').then(res=>{
-        this.mxTree = res.data;
-      },err=>{
+      // this.$http.get('/Template/GetTree').then(res=>{
+      //   this.mxTree = res.data;
+      // },err=>{
 
-        this.$Notice.error({desc: '获取模型库失败！'});
-      })
+      //   this.$Notice.error({desc: '获取模型库失败！'});
+      // })
     },
     //添加场景
     addScene(){
-      this.showDz = true;
+      // this.showDz = true;
+      this.$Modal.confirm({
+          title: '添加场景',
+          onOk:(val)=>{
+            this.showDz = !this.showDz;
+          },
+          render: (h) => {
+              return h('div', [
+                        h('label', {
+
+                        }, '场景名称：'),
+                      h('Input', {
+                          props: {
+                              autofocus: true,
+                              placeholder: '请输入场景名称'
+                          },
+                          class:'re-input',
+                          on: {
+                              input: (val) => {
+                                  this.newSceneData.name = val.data;
+                              }
+                          }
+                      })
+                    ]);
+              return h('Input', {
+                  props: {
+                      autofocus: true,
+                      placeholder: '请输入场景名称'
+                  },
+                  class:'re-input',
+                  on: {
+                      input: (val) => {
+                          this.newSceneData.name = val.data;
+                      }
+                  }
+              })
+          }
+      })
     },
   }
 }

@@ -1,8 +1,8 @@
 <template>
     <div class="ivu-tree dragtree">
-        <li :id='model.id' @click="toggle" draggable='true' @dragstart='dragStart($event,model)' @drag='draging($event,model)' @dragend='dragEnd'>
+        <li :id='model.id' @click="toggle">
             <span v-show="model.children" :class="[isClicked ? 'nodeClicked' : '','ivu-icon ivu-icon-arrow-right-b']"></span>
-            <span class='ivu-tree-title'>{{model.name}}</span>
+            <span class='ivu-tree-title' :isnew="other" v-dragTree="model">{{model.title}}</span>
         </li>
         <ul class='ivu-tree-children' v-show="open" v-if="isFolder">
             <mytree v-for="model in model.children" :model="model" :key='model.id' default-text='defaultText' :hover-color='hoverColor'>
@@ -34,6 +34,7 @@ export default {
     },
     props: {
         model: Object,
+        other:'',
         'default-text': String, // 填加节点时显示的默认文本．
         'current-highlight': Boolean, // 当前节点高亮
         'hover-color': String,

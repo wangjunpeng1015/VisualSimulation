@@ -1,9 +1,7 @@
 <template>
   <div id="app" v-cloak>
     <heade title="精细化战场电磁态势仿真"></heade>
-    <router-view/>
-    <!-- 地球 -->
-    <div id="map"></div>
+    <router-view/>    
   </div>
 </template>
 
@@ -21,13 +19,10 @@ export default {
 
   },
   mounted(){
-    window.mainmap = maps.initMap('map');
-    // this.init();
-    // this.initmap();
+      window.mainmap = maps.initMap('map');
   },
   methods:{
-    initmap(){
-    }
+
   }
 }
 </script>

@@ -45,24 +45,33 @@ Vue.directive('drag', {
 //拖拽树
 Vue.directive('dragTree', {
   componentUpdated(el,binding,vnode,oldVnode){ //inserted 钩子函数:当元素被插入父元素时触发,可省略
-	  let oDiv=el; //el --> 触发的DOM元素
 	  //定义拖拽数据
 	  //数据，d3节点，开始拖拽，鼠标相对dom位置
 	  let tempNode, tempData, dragStarted, relCoords;
 	  //判断是拖动到地球还是场景搭载
-	  let newScene = binding.value;
+	  debugger
+	  // let newScene = binding.value;
+	  tempData = binding.value
+
 	  setTimeout(()=>{
-	  	debugger
-	      d3.select(el).selectAll('.ivu-tree-title').call(d3.drag()
+	      d3.select(el).call(d3.drag()
 	          .on("start", function(d) {
+	          	if(newScene){
+	          		
+	          	}else{
+          		  // tempData = getTempData(tempData);
 	              tempNode = getTempNode();
 	              // d = tempData;
 	              console.log(newScene)
 	              dragStarted = true;
+	          	}
 
-	              d3.event.sourceEvent.stopPropagation();
+	            d3.event.sourceEvent.stopPropagation();
 	          })
 	          .on("drag", function(d) {
+	          	if(newScene){
+
+	          	}else{
 	              // d = tempData;
 	              // var svgGroupOffset = {
 	              //     'x': parseInt(svgGroup.attr('transform').split('(')[1].split(')')[0].split(',')[0], 10),
@@ -86,19 +95,33 @@ Vue.directive('dragTree', {
 	              node.attr("x", x).attr('y',y);
 	              // node.attr("transform", "translate(" + (d.x0 - svgGroupOffset.x)/svgGroupOffset.scale + "," + (d.y0 - svgGroupOffset.y)/svgGroupOffset.scale + ")");
 	              // updateTempConnector(true);
+	          	}
 	          })
 	          .on("end", function(d) {
-	              //判断最后是否在场景中 不在删除
-	              let width = $('svg').width();
-	              let height = $('svg').height();
-	              var newNode = tempNode._groups[0][0];
-	              if(relCoords[0]>0 && relCoords[1]>0 && relCoords[0]<width && relCoords[1]<height){
-	              	console.log('对的')
-	              }else{
-	              	d3.select(newNode).remove()
-	              }
+	          	  if(newScene){
+  	          		let position = mainmap.position;
+  	          		let data = [{
+  				          name:'北京市',
+  				          population:'11',
+  				          lx:'0',//图片类型
+  				          zy:'0',//阵营
+  				          lon:parseFloat(position[0]),
+  				          lat:parseFloat(position[1]) 
+  				       }
+  				     ]
+  	          		mainmap.drawStatic(data);
+	          	  }else{
+		              //判断最后是否在场景中 不在删除
+		              let width = $('svg').width();
+		              let height = $('svg').height();
+		              var newNode = tempNode._groups[0][0];
+		              if(relCoords[0]>0 && relCoords[1]>0 && relCoords[0]<width && relCoords[1]<height){
+		              	console.log('对的')
+		              }else{
+		              	d3.select(newNode).remove()
+		              }
+	          	  }
 	          }));
-			
 	  },200)
 
 	  function getTempData(d) {
@@ -129,11 +152,13 @@ Vue.directive('dragTree', {
 	          .data([{ name: "大鹏",type:'01',lx:'03'}])
 
 	      let node = g.append('image')
-	      		// .attr('width',)
+	      		.attr("width",d=>{
+	              	return picUrl[d.type].width/2;
+	            })
 	        	.attr('xlink:href',d=>{
                 	return 'static/image/equipbox.png'
             	})
 	      return node;
 	  }
-  }
+  },
 })

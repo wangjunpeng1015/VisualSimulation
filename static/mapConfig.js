@@ -1,13 +1,14 @@
 const config = require('../static/config')//引入配置文件
-const iconUrl = {
-  tower:'static/image/map/tower.png'
-}
+
 const json = require('../static/planjson.json')
+
+const iconUrl = require('../static/baseUrl.json')
 
 function initMap(id){
   let view = new ol.View({   // 视图
     center:ol.proj.transform([104.06667, 30.66667], 'EPSG:4326', 'EPSG:3857'),// 设置地图中心坐标点
     zoom:5,
+    minZoom: 2
     // extent:[-180,180,-90,90]  
   });
 
@@ -46,16 +47,29 @@ function initMap(id){
         ]),
         view:view
     });
-    map.on('pointermove',function(e){  
+    //鼠标移动事件
+    map.on('pointermove',e=>{  
       /*显示坐标*/
        var coord = e.coordinate;
        var degrees = ol.proj.transform(coord, 'EPSG:3857','EPSG:4326');  
        var position = ol.coordinate.toStringXY(degrees, 4);
-       $('#longlat>span').text(position)
+       position = position.split(',');
+
+       objInstance.position = [position[0],position[1]];
+       $('#longlat>span').text(position[0]+','+position[1])
        /*鼠标放在Featrue上显示手型*/
        let pixel = map.getEventPixel(e.originalEvent);
        let hit = map.hasFeatureAtPixel(pixel);
        map.getTargetElement().style.cursor = hit?'pointer':'';
+    });
+    //因为openlayers没有右击事件所以采用jq绑定
+    $(map.getViewport()).on("contextmenu", e=> {
+      e.preventDefault();
+      map.forEachFeatureAtPixel(map.getEventPixel(e), function (feature, layer) {
+          // map.removeLayer(layer)//删除layer
+          console.log(feature)
+          console.log(layer)
+      });
     });
     return map;
   }
@@ -66,6 +80,13 @@ function initMap(id){
   };
   var objInstance = {
     map,
+    position:'',
+    /*控制地图缩放*/
+    controlZoom(zoom){
+      map.setView(new ol.View({
+        zoom: zoom,
+      }));
+    },
     /*画动线条*/
     drawAnimateLine(data){
       var style = new ol.style.Style({
@@ -254,6 +275,9 @@ function initMap(id){
           image: new ol.style.Icon({
             anchor: [0.5, 5],
             src: 'static/image/plan.png',
+            // var rotation = Math.atan2(dy, dx),
+            // rotateWithView: true,
+            // rotation: -rotation
           })
         })
       };
@@ -348,57 +372,62 @@ function initMap(id){
     },
     /*添加静态设施*/
     drawStatic(jsonObj){
-      let beijing = ol.proj.fromLonLat([116.28,39.54]);
+      jsonObj = jsonObj || [
+        {
+          name:'北京市',
+          population:'11',
+          lx:'0',//图片类型
+          zy:'1',//阵营
+          lon:'116.46',
+          lat:'39.92'
+        }
+      ]
       /*设置静态设施样式*/
       let createLabelStyle = feature=>{
+        debugger
         return new ol.style.Style({
           image:new ol.style.Icon(({
-            anchor:[0.5,50],//偏离原来左边
-            anchorOrigin:'top-right',
-            anchorXUnits:'fraction',
-            anchorYUnits:'pixels',
-            offsetOrigin:'bottom-right',
-            src:'static/image/map/tower.png'
+            anchor: [0.5, 50],//偏离原来左
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src:iconUrl.tower.url
           })),
           text:new ol.style.Text({
             textAlign:'center',
             textBaseline:'middle',
-            text:feature.get('name')+'人数：'+feature.get('population'),
-            fill:new ol.style.Fill({color:'#a30'}),//字体颜色
+            text:feature.get('name'),
+            fill:new ol.style.Fill({color:()=>{
+              return feature.get('zy') == '0'?'#a30':'#9FF'
+            }}),//字体颜色
             stroke: new ol.style.Stroke({color:'#ffcc33',width:3})
           })
         })
       };
-      let iconFeature = new ol.Feature({
-        geometry:new ol.geom.Point(beijing),
-        name:'北京市',
-        population:2115
-      });
-      iconFeature.setStyle(createLabelStyle(iconFeature));
       let vectorSource = new ol.source.Vector({
-        features:[iconFeature]
+        wrapX: false,
+        features:[]
       });
+
+      jsonObj.forEach(item=>{
+        let point = ol.proj.fromLonLat([parseFloat(item.lon),parseFloat(item.lat)])
+        let iconFeature = new ol.Feature({
+          geometry:new ol.geom.Point(point),
+          name:item.name,
+          population:item.population,
+          lx:item.lx,
+          zy:item.zy
+        });
+
+        iconFeature.setStyle(createLabelStyle(iconFeature));
+        iconFeature.on("click", function(e) {
+          alert(111)
+        });
+        vectorSource.addFeature(iconFeature)
+      })
       let staticLayer = new ol.layer.Vector({
         source:vectorSource
       });
       map.addLayer(staticLayer);
-      // position = formatLonLat(position);
-      // window.contour = new ol.layer.Vector({
-      //   id:'static-1',
-      //   source: new ol.source.Vector({
-      //     features: [new ol.Feature(new ol.geom.Point(position))],
-      //      wrapX:false
-      //   }),
-      //   style: new ol.style.Style({
-      //     image: new ol.style.Icon(({
-      //       anchor: [0.5,1],
-      //       anchorXUnits: 'fraction',
-      //       anchorYUnits: 'pixels',
-      //       src: iconUrl.tower
-      //     }))
-      //   })
-      // });
-      // map.addLayer(contour);
     },
   }
   return objInstance;
