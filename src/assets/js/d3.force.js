@@ -3,18 +3,6 @@ import * as d3 from 'd3';
 //图片地址json
 import equipUrl from '../../../static/baseUrl.json'
  //type：外框图片    lx：内图片
-let nodess=[
-        { name: "Adam",type:'00',lx:'00'},
-        { name: "Bob",type:'01',lx:'01'},
-        { name: "Carrie",type:'01',lx:'02'},
-        { name: "Donovan",type:'01',lx:'03'},
-        { name: "Edward",type:'01',lx:'04'},
-        { name: "Felicity",type:'01',lx:'05'},
-        { name: "George",type:'01',lx:'01'},
-        { name: "Hannah",type:'01',lx:'05'},
-        { name: "Iris",type:'01',lx:'04'},
-        { name: "Jerry",type:'01',lx:'03'}
-]
 
 //图片Url地址
 const picUrl = {
@@ -29,7 +17,7 @@ const picUrl = {
 		height:'109'
 	}
 }
-export const drawforce= function (id,nodes = nodess,scope){
+export const drawforce= function (id,nodes,scope){
 	//构建连接线link
 	let links = [];
 	for(let i=1;i<nodes.length;i++){
@@ -137,6 +125,7 @@ export const drawforce= function (id,nodes = nodess,scope){
 	var nodetext = nodegroup.selectAll('text')
 				  .data(nodes)
 				  .enter().append('text')
+				  .style('fill','#91FFFF')
 				  .text(d=>{
 				  	return d.name;
 				  })
@@ -185,8 +174,7 @@ export const drawforce= function (id,nodes = nodess,scope){
 	  setTimeout(()=>{
 	      d3.selectAll('.dragtree').selectAll('.ivu-tree-title').call(d3.drag()
 	          .on("start", function(d) {
-	          	let name = d3.select(this).text();
-				let code = d3.select(this).attr('code');
+	          	
 	          	console.log(scope.showDz)
 	          	if(scope.showDz){
 	          		
@@ -208,18 +196,19 @@ export const drawforce= function (id,nodes = nodess,scope){
 
 	              // get coords of mouseEvent relative to svg container to allow for panning
 	              relCoords = d3.mouse($('svg').get(0));
-	              let x = relCoords[0];
-	              let y = relCoords[1];
-	          	  // console.log(x,y)
+	              let x = relCoords[0]+10;//不加数字会出现mouseover后马上mouseout
+	              let y = relCoords[1]+10;
 
 	              var node = d3.select(newNode);
 
-	              // node.attr("transform","translate("+x+","+y+")");
-	              // node.attr("x", x).attr('y',y);
+	              node.attr("x", x).attr('y',y);
 
 	          	}
 	          })
 	          .on("end", function(d) {
+	          	let name = d3.select(this).text();
+				let code = d3.select(this).attr('code');
+
 	          	  if(scope.showDz){
 		          		let position = mainmap.position;
 		          		let data = [{
@@ -231,7 +220,16 @@ export const drawforce= function (id,nodes = nodess,scope){
 					          lat:parseFloat(position[1]) 
 					       }
 					     ]
+
 		          		mainmap.drawStatic(data);
+		          		//获取场景信息
+		          		scope.$http.get('/Template/GetModelByCode?code='+code).then(res=>{
+		          			// res.data
+		          			// scope.paramsData = [];
+
+		          		},err=>{
+
+		          		})
 	          	  }else{
 		              //判断最后是否在场景中且移动到某个节点中否则删除
 		              let width = $('svg').width();
@@ -239,15 +237,23 @@ export const drawforce= function (id,nodes = nodess,scope){
 		              var newNode = tempNode._groups[0][0];
 		              if(relCoords[0]>0 && relCoords[1]>0 && relCoords[0]<width && relCoords[1]<height && selectData!==null){
 		              	// selectData
-		              	// drawforce(id,node,link,scope);//更新d3画图
-		              	alert('拖进去了')
+		              	if(selectData.type == '00'){
+				          	
+		              		//先删除svg重绘
+			              	d3.select('svg').remove();
+			              	nodes.push({ "name": name,"type":'01',"lx":'03'})
+			              	drawforce(id,nodes,scope);//更新d3画图
+		              	}else{
+		              		d3.select(newNode).remove()
+		              	}
+
 		              }else{
 		              	d3.select(newNode).remove()
 		              }
 	          	  }
 	          	  selectData = null;
 	          }));
-	  },200)
+	  },1000)
 	}
 	function getTempData(d) {
 	      return {

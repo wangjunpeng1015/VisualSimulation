@@ -31,6 +31,9 @@
         <div class="flex-60 layout-column">
           <div class="title">群、搭载关系</div>
           <div id="d3box" class="flex"></div>
+          <div class="buttons">
+            <Button class="btn" @click="save">保存</Button>
+          </div>
         </div>
         <div class="flex layout-column">
           <div class="title">参数设置</div>
@@ -117,13 +120,13 @@ export default {
             key: '名称',
             value: '航母群',
         },{
-            key: '颜色',
-            value: '2018/01/05',
+            key: 'type',//类型
+            value: '',
         },{
-            key: '图标',
-            value: '2018/01/05',
+            key: 'position',//经纬度
+            value: '123',
         },{
-            key: '侦察装备类型',
+            key: '',
             value: '2018/01/05',
         },{
             key: '侦察装备',
@@ -169,6 +172,19 @@ export default {
       //当前点击树节点数据
       sceneChoose:[],
       contry:'',
+      //d3数据
+      carryNodes: [
+        { name: "Adam",type:'00',lx:'00'},
+        { name: "Bob",type:'01',lx:'01'},
+        { name: "Carrie",type:'01',lx:'02'},
+        { name: "Donovan",type:'01',lx:'03'},
+        { name: "Edward",type:'01',lx:'04'},
+        { name: "Felicity",type:'01',lx:'05'},
+        { name: "George",type:'01',lx:'01'},
+        { name: "Hannah",type:'01',lx:'05'},
+        { name: "Iris",type:'01',lx:'04'},
+        { name: "Jerry",type:'01',lx:'03'}
+      ],
       //添加新场景数据
       newSceneData:{}
     }
@@ -179,7 +195,7 @@ export default {
     }
   },
   mounted(){
-    this.init();
+      this.init();
   },
   methods:{
     init(){
@@ -187,7 +203,7 @@ export default {
       this.getmxTree();
     },
     drawForce(){
-      drawforce('d3box',undefined,this);
+      drawforce('d3box',this.carryNodes,this);
     },
     sceneChange(data){
       this.sceneChoose = data;
@@ -266,6 +282,14 @@ export default {
           }
       })
     },
+    //保存
+    save(){
+      this.$http.post('').then(res=>{
+
+      },err=>{
+
+      })
+    }
   }
 }
 </script>
@@ -294,6 +318,11 @@ export default {
       top:140px;
       padding-bottom: 140px;
       transition:all 1s linear;
+    }
+    .buttons{
+      position:absolute;
+      top:0;
+      right:0;
     }
   }
 </style>

@@ -30,17 +30,17 @@ function initMap(id){
           //   }),
           //   // source: new ol.source.OSM(),
           // }),
-          // new ol.layer.Tile({
-          //   source: new ol.source.OSM()
-          // })
-          //使用bing地图
           new ol.layer.Tile({
-            source: new ol.source.BingMaps({
-                  key: 'AgiU9gCjKNfaR2yFSDfLw8e9zUlAYisRvRC2_L-LsGYN2bII5ZUvorfP3QJvxmjn', //自己申请的key
-                  imagerySet: 'Aerial',
-                  wrapX:false
-              })
-          }),
+            source: new ol.source.OSM()
+          })
+          //使用bing地图
+          // new ol.layer.Tile({
+          //   source: new ol.source.BingMaps({
+          //         key: 'AgiU9gCjKNfaR2yFSDfLw8e9zUlAYisRvRC2_L-LsGYN2bII5ZUvorfP3QJvxmjn', //自己申请的key
+          //         imagerySet: 'Aerial',
+          //         wrapX:false
+          //     })
+          // }),
         ],// 图层可以在地图初始化一起进行初始化也可以后期通过addLayer方法进行添加
         controls: ol.control.defaults().extend([
           // mouse//鼠标经纬度
