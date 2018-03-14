@@ -2,7 +2,7 @@
     <div class="ivu-tree dragtree">
         <li :id='model.id' @click="toggle">
             <span v-show="model.children" :class="[isClicked ? 'nodeClicked' : '','ivu-icon ivu-icon-arrow-right-b']"></span>
-            <span class='ivu-tree-title' :isnew="other" v-dragTree="model">{{model.title}}</span>
+            <span class='ivu-tree-title' :code='model.Code'>{{model.title}}</span>
         </li>
         <ul class='ivu-tree-children' v-show="open" v-if="isFolder">
             <mytree v-for="model in model.children" :model="model" :key='model.id' default-text='defaultText' :hover-color='hoverColor'>

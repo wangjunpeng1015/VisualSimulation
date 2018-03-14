@@ -97,7 +97,6 @@ function getDatabase(){
       })
     }
     newdata(res.data)
-    debugger
     Vue.prototype.$baseData = res.data;
   },err=>{
     // iview.$Notice.error({desc: '删除失败！'});

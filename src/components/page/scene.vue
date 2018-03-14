@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="flex container layout-column">
-        <div class="flex-65 layout-column">
+        <div class="flex-60 layout-column">
           <div class="title">群、搭载关系</div>
           <div id="d3box" class="flex"></div>
         </div>
@@ -187,7 +187,7 @@ export default {
       this.getmxTree();
     },
     drawForce(){
-      drawforce('d3box');
+      drawforce('d3box',undefined,this);
     },
     sceneChange(data){
       this.sceneChoose = data;
@@ -218,12 +218,12 @@ export default {
               }
           ]
       }]
-      // this.$http.get('/Template/GetTree').then(res=>{
-      //   this.mxTree = res.data;
-      // },err=>{
+      this.$http.get('/Template/GetTree').then(res=>{
+        this.mxTree = res.data;
+      },err=>{
 
-      //   this.$Notice.error({desc: '获取模型库失败！'});
-      // })
+        this.$Notice.error({desc: '获取模型库失败！'});
+      })
     },
     //添加场景
     addScene(){
@@ -289,6 +289,7 @@ export default {
       right:40px;
     }
     .containbox{
+      height:100%;
       position:fixed;
       top:140px;
       padding-bottom: 140px;
