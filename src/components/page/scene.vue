@@ -5,7 +5,7 @@
       <div>
         <div class="contain-head layout-row" style="align-items:center;justify-content: space-between;">
           <h3>场景模型列表</h3>
-          <Button class="btn" @click="addScene"><Icon type="plus-round"></Icon></Button>
+          <Button class="btn" @click="showDz = true"><Icon type="plus-round"></Icon></Button>
           <Select v-model="scene" filterable style="width:150px">
             <Option v-for="item in scenes" :value="item.value" :key="item.value">{{item.label}}</Option>
           </Select>
@@ -23,22 +23,41 @@
     <!-- 中 -->
     <div class="containbox flex-58" :style="{top:showDz?'100%':''}">
       <div>
-        <div class="contain-head">
+        <div class="contain-head layout-row" style="justify-content: space-between;align-items:center;">
           <h3>场景搭载</h3>
+          <div class="buttons">
+            <Button class="btn" @click="save">保存</Button>
+          </div>
         </div>
       </div>
       <div class="flex container layout-column">
         <div class="flex-60 layout-column">
           <div class="title">群、搭载关系</div>
           <div id="d3box" class="flex"></div>
-          <div class="buttons">
-            <Button class="btn" @click="save">保存</Button>
-          </div>
+          
         </div>
         <div class="flex layout-column">
           <div class="title">参数设置</div>
           <div class="flex layout-column">
-            <Table class="flex layout-column" :show-header='false' stripe :columns="paramsCol" :data="paramsData"></Table>
+            <table class="wjptable">
+              <tr>
+                <td>装备国家</td>
+                <td><Cascader :data="$baseData" trigger="hover" v-model="zbgj"></Cascader></td>
+              </tr>
+              <tr>
+                <td>敌我属性</td>
+                <td>
+                  <Select v-model="dwsx">
+                    <Option v-for="item in dwsxs" :value="item.value" :key="item.label">{{ item.label }}</Option>
+                  </Select>
+                </td>
+              </tr>
+              <tr v-for="(value,key) in paramsData">
+                <td>{{key}}</td>
+                <td>{{value}} </td>
+              </tr>
+            </table>
+            <!-- <Table class="flex layout-column" :show-header='false' stripe :columns="paramsCol" :data="paramsData"></Table> -->
           </div>
         </div>
       </div>
@@ -69,6 +88,13 @@ export default {
     return {
       //显示搭载框
       showDz:false,
+      dwsxs:[{
+        value: 0,
+        label: '敌方'
+      },{
+        value: 1,
+        label: '我方'
+      }],
       /*场景信息*/
       sceneCol:[
         {
@@ -111,28 +137,7 @@ export default {
             key: 'value'
         }
       ],
-      paramsData:[
-        {
-            key: '编号',
-            value: 1,
-        },
-        {
-            key: '名称',
-            value: '航母群',
-        },{
-            key: 'type',//类型
-            value: '',
-        },{
-            key: 'position',//经纬度
-            value: '123',
-        },{
-            key: '',
-            value: '2018/01/05',
-        },{
-            key: '侦察装备',
-            value: '2018/01/05',
-        }
-      ],
+      paramsData:{},
       /*场景*/
       scene:'',
       scenes:[{
@@ -171,22 +176,8 @@ export default {
       mxTree:[],
       //当前点击树节点数据
       sceneChoose:[],
-      contry:'',
       //d3数据
-      carryNodes: [
-        { name: "Adam",type:'00',lx:'00'},
-        { name: "Bob",type:'01',lx:'01'},
-        { name: "Carrie",type:'01',lx:'02'},
-        { name: "Donovan",type:'01',lx:'03'},
-        { name: "Edward",type:'01',lx:'04'},
-        { name: "Felicity",type:'01',lx:'05'},
-        { name: "George",type:'01',lx:'01'},
-        { name: "Hannah",type:'01',lx:'05'},
-        { name: "Iris",type:'01',lx:'04'},
-        { name: "Jerry",type:'01',lx:'03'}
-      ],
-      //添加新场景数据
-      newSceneData:{}
+      carryNodes: [],
     }
   },
   computed:{
@@ -196,15 +187,16 @@ export default {
   },
   mounted(){
       this.init();
+      this.getParam();
   },
   methods:{
     init(){
-      this.drawForce();
       this.getmxTree();
     },
     drawForce(){
       drawforce('d3box',this.carryNodes,this);
     },
+    //场景切换
     sceneChange(data){
       this.sceneChoose = data;
     },
@@ -234,52 +226,62 @@ export default {
               }
           ]
       }]
+      this.drawForce();
       this.$http.get('/Template/GetTree').then(res=>{
         this.mxTree = res.data;
+        this.drawForce();
       },err=>{
 
         this.$Notice.error({desc: '获取模型库失败！'});
       })
     },
     //添加场景
-    addScene(){
-      // this.showDz = true;
+    addScene(data){
       this.$Modal.confirm({
           title: '添加场景',
           onOk:(val)=>{
-            this.showDz = !this.showDz;
+            //展开搭载
+            this.showDz = false;
+            // let nodes = Object.assign(nodes,data);
+            // this.$http.post('/Scenes/PostScene',data).then(res=>{
+
+            // },err=>{
+
+            // })
           },
           render: (h) => {
-              return h('div', [
-                        h('label', {
+            return h('div', [
+                    h('label', {
 
-                        }, '场景名称：'),
-                      h('Input', {
-                          props: {
-                              autofocus: true,
-                              placeholder: '请输入场景名称'
-                          },
-                          class:'re-input',
-                          on: {
-                              input: (val) => {
-                                  this.newSceneData.name = val.data;
-                              }
+                    }, '场景名称：'),
+                  h('Input', {
+                      props: {
+                          autofocus: true,
+                          placeholder: '请输入场景名称'
+                      },
+                      class:'re-input',
+                      on: {
+                          input: (val) => {
+                              this.newSceneData.name = val.data;
                           }
-                      })
-                    ]);
-              return h('Input', {
-                  props: {
-                      autofocus: true,
-                      placeholder: '请输入场景名称'
-                  },
-                  class:'re-input',
-                  on: {
-                      input: (val) => {
-                          this.newSceneData.name = val.data;
                       }
-                  }
-              })
+                  })
+                ]);
           }
+      })
+    },
+    //获取模型配置参数
+    getParam(code){
+      code = '02010101';
+      this.$http.get(`/Template/GetModelByCode?code=${code}`).then(res=>{
+        //装备国家，敌我属性
+        this.zbgj = res.data['装备国家'];
+        this.dwsx = res.data['敌我属性'];
+        delete res.data['装备国家'];
+        delete res.data['敌我属性'];
+        this.paramsData = res.data;
+      },err=>{
+
       })
     },
     //保存
@@ -318,11 +320,6 @@ export default {
       top:140px;
       padding-bottom: 140px;
       transition:all 1s linear;
-    }
-    .buttons{
-      position:absolute;
-      top:0;
-      right:0;
     }
   }
 </style>

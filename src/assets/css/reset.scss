@@ -36,6 +36,12 @@ input::-webkit-input-placeholder{
 	color: rgba(145,255,255,0.5) !important;
 }
 /* 表格重置 */
+.wjptable{
+	width: 100%;
+	tr:nth-child(2n){
+		background-color: rgba(33,55,55,.5);
+	}
+}
 .ivu-table-wrapper{
 	// border:1px solid #3a595c;
 	border:none;

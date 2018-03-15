@@ -1,3 +1,4 @@
+/*改页面只用于scene组件*/
 import * as d3 from 'd3';
 // import picUrl from ''
 //图片地址json
@@ -54,7 +55,7 @@ export const drawforce= function (id,nodes,scope){
 	let colors = d3.scaleOrdinal(d3.schemeCategory10);
 	var simulation = d3.forceSimulation(nodes)
 	                   .force('charge', d3.forceManyBody())//顶点的电荷数。该参数决定是排斥还是吸引，数值越小越互相排斥
-	                   .force('link', d3.forceLink(links).distance(200))//连接线长度
+	                   .force('link', d3.forceLink(links).distance(150))//连接线长度
 	                   .force('center', d3.forceCenter(width / 2, height / 2))
 	//连接线
 	var link = groupG.append('g')
@@ -69,15 +70,7 @@ export const drawforce= function (id,nodes,scope){
 	//大节点组
 	var nodegroup = groupG.append('g')
 	              .attr('class', 'nodes')
-	var inqq = function (d){
-		selectData = d;
-  		console.log('in')
 
-	}
-	var outqq = function (){
-		console.log('out')
-  		selectData = null;
-	}
 	//单个节点组     
 	var singlegroup = nodegroup.selectAll('g')
 				  .data(nodes)
@@ -88,11 +81,15 @@ export const drawforce= function (id,nodes,scope){
  	              	return d.lx == '00';
  	              })
  	              .on("mouseenter",d=>{
-              		// selectData = d;
-              		inqq(d)
+              		selectData = d;
+					console.log('in')
 	              })
 	              .on("mouseleave",d=>{
-              		outqq(d)
+              		console.log('out')
+  					selectData = null;
+	              })
+	              .on("dblclick ",d=>{
+	              	scope.getParam(d.code);
 	              })
 	              .call(drag)
 
@@ -174,17 +171,18 @@ export const drawforce= function (id,nodes,scope){
 	  setTimeout(()=>{
 	      d3.selectAll('.dragtree').selectAll('.ivu-tree-title').call(d3.drag()
 	          .on("start", function(d) {
-	          	
-	          	console.log(scope.showDz)
+	          	let name = d3.select(this).text();
+				let code = d3.select(this).attr('code');
+				let temp = {
+					"name":name,
+					"code":code
+				}
+      		  	tempData = getTempData(temp);
 	          	if(scope.showDz){
 	          		
 	          	}else{
-	      		  // tempData = getTempData(tempData);
-	              tempNode = getTempNode();
-	              // d = tempData;
-	             
+	              tempNode = getTempNode(tempData);
 	          	}
-
 	            d3.event.sourceEvent.stopPropagation();
 	          })
 	          .on("drag", function(d) {
@@ -201,35 +199,33 @@ export const drawforce= function (id,nodes,scope){
 
 	              var node = d3.select(newNode);
 
-	              node.attr("x", x).attr('y',y);
+	              node.attr("transform",`translate(${x},${y})`);
 
 	          	}
 	          })
 	          .on("end", function(d) {
-	          	let name = d3.select(this).text();
-				let code = d3.select(this).attr('code');
-
+	          	
 	          	  if(scope.showDz){
 		          		let position = mainmap.position;
 		          		let data = [{
-					          name:'北京市',
-					          population:'11',
+					          "name":name,
+					          population:'',
 					          lx:'0',//图片类型
 					          zy:'0',//阵营
 					          lon:parseFloat(position[0]),
 					          lat:parseFloat(position[1]) 
 					       }
 					     ]
-
 		          		mainmap.drawStatic(data);
-		          		//获取场景信息
-		          		scope.$http.get('/Template/GetModelByCode?code='+code).then(res=>{
-		          			// res.data
-		          			// scope.paramsData = [];
+					     //搭载创建根节点
+					    let temp = _.cloneDeep(tempData);
+					    temp.type = "00";
+		          		nodes.push(temp);
+		              	update();
 
-		          		},err=>{
-
-		          		})
+						//调用页面新建场景
+		          		scope.addScene(temp);
+		          		
 	          	  }else{
 		              //判断最后是否在场景中且移动到某个节点中否则删除
 		              let width = $('svg').width();
@@ -240,9 +236,8 @@ export const drawforce= function (id,nodes,scope){
 		              	if(selectData.type == '00'){
 				          	
 		              		//先删除svg重绘
-			              	d3.select('svg').remove();
-			              	nodes.push({ "name": name,"type":'01',"lx":'03'})
-			              	drawforce(id,nodes,scope);//更新d3画图
+			              	nodes.push(tempData)
+			              	update();
 		              	}else{
 		              		d3.select(newNode).remove()
 		              	}
@@ -255,41 +250,53 @@ export const drawforce= function (id,nodes,scope){
 	          }));
 	  },1000)
 	}
+	//更新
+	function update(){
+		d3.select('svg').remove();
+		drawforce(id,nodes,scope);//更新d3画图
+	}
 	function getTempData(d) {
 	      return {
 	          "name": d.name,
-	          "type": d.type,
-	          //"dataType": d.dataType,
-	          "x0": 0,
-	          "y0": 0,
-	          "depth": 0,
-	          "x": 0,
-	          "y": 0,
-	          // "id": d.id,
-	          "id":totalNodes++,
-	          "parent": root,
-	          "appType": d.appType,
-	          "appData": d.appData,
-	          "contains":d.contains,
-	          "move":d.move,
-	          "edit":d.edit,
-	          "delete":d.delete,
-	          "yslx":d.yslx
+	          "type": "01",
+	          "code":d.code,
+	          "lx":getlx(d.code)
 	      }
 	}
-	function getTempNode(type) {
+	//拖动图片类型
+	let getlx = (code)=>{
+		return '01'
+		if (!code) return '01';
+		if(code.startsWith('00')){
+			return '';
+		}else{
+			return '';
+		}
+	}
+	function getTempNode(data) {
 	      var g = d3.select('svg .nodes')
 	      	  .append('g')
-	          .data([{ name: "大鹏",type:'01',lx:'03'}])
+	          .data([data])
 
-	      let node = g.append('image')
+	      g.append('image')
 	      		.attr("width",d=>{
-	              	return picUrl[d.type].width/2;
+	              	return 54;
 	            })
 	        	.attr('xlink:href',d=>{
 	            	return 'static/image/equipbox.png'
 	        	})
-	      return node;
+    		
+    	    g.append('image')
+	              .attr("width",d=>{
+	              	return d.lx == '00'?equipUrl[d.lx].width:'50';
+	              }).attr("height",d=>{
+	              	return d.lx == '00'?equipUrl[d.lx].height:'50';
+	              })
+	              .attr('xlink:href', function(d) {
+					return equipUrl[d.lx].url;
+			  })
+
+	      return g;
 	}
 	eventdrag();
 }
