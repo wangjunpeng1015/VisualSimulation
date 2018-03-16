@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+  	<Cascader :data="data" v-model="value1"></Cascader>
 <!-- 
     <div id='menu'>
     	<label for="qq" class="checkbox">
@@ -24,8 +25,48 @@ export default {
 	},
 	data () {
 		return {
-			 message:"hello"
-		}
+			value1: [],
+			                data: [{
+			                    value: 'beijing',
+			                    label: '北京',
+			                    children: [
+			                        {
+			                            value: 'gugong',
+			                            label: '故宫'
+			                        },
+			                        {
+			                            value: 'tiantan',
+			                            label: '天坛'
+			                        },
+			                        {
+			                            value: 'wangfujing',
+			                            label: '王府井'
+			                        }
+			                    ]
+			                }, {
+			                    value: 'jiangsu',
+			                    label: '江苏',
+			                    children: [
+			                        {
+			                            value: 'nanjing',
+			                            label: '南京',
+			                            children: [
+			                                {
+			                                    value: 'fuzimiao',
+			                                    label: '夫子庙',
+			                                }
+			                            ]
+			                        },
+			                        {
+			                            value: 'suzhou',
+			                            label: '苏州',
+			                            children: [
+			                                
+			                            ]
+			                        }
+			                    ],
+			                }]
+			            }
 	},
 	computed:{
 	   reverseMessage:function(){

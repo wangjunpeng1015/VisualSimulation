@@ -204,7 +204,6 @@ export const drawforce= function (id,nodes,scope){
 	          	}
 	          })
 	          .on("end", function(d) {
-	          	
 	          	  if(scope.showDz){
 		          		let position = mainmap.position;
 		          		let data = [{
@@ -224,7 +223,7 @@ export const drawforce= function (id,nodes,scope){
 		              	update();
 
 						//调用页面新建场景
-		          		scope.addScene(temp);
+		          		scope.addScene(temp.code);//code,经纬度
 		          		
 	          	  }else{
 		              //判断最后是否在场景中且移动到某个节点中否则删除
@@ -252,7 +251,7 @@ export const drawforce= function (id,nodes,scope){
 	}
 	//更新
 	function update(){
-		d3.select('svg').remove();
+		d3.selectAll('svg').remove();
 		drawforce(id,nodes,scope);//更新d3画图
 	}
 	function getTempData(d) {

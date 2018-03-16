@@ -30,19 +30,19 @@ function initMap(id){
           //   }),
           //   // source: new ol.source.OSM(),
           // }),
-          // new ol.layer.Tile({
-          //   source: new ol.source.OSM({
-          //     wrapX:false
-          //   })
-          // })
-          //使用bing地图
           new ol.layer.Tile({
-            source: new ol.source.BingMaps({
-                  key: '2jD4ibF2kREHAmm2KUU8~lWNIAWz4Q5KSpP_OXXDFww~AnHgZkKiBTJl6k2JZ2AuxeTQdHYx3BistJm7bF1ZzOGk4pZp5QqAi_6kTGFcgObW', //自己申请的key
-                  imagerySet: 'Aerial',
-                  wrapX:false
-              })
-          }),
+            source: new ol.source.OSM({
+              wrapX:false
+            })
+          })
+          //使用bing地图
+          // new ol.layer.Tile({
+          //   source: new ol.source.BingMaps({
+          //         key: '2jD4ibF2kREHAmm2KUU8~lWNIAWz4Q5KSpP_OXXDFww~AnHgZkKiBTJl6k2JZ2AuxeTQdHYx3BistJm7bF1ZzOGk4pZp5QqAi_6kTGFcgObW', //自己申请的key
+          //         imagerySet: 'Aerial',
+          //         wrapX:false
+          //     })
+          // }),
         ],// 图层可以在地图初始化一起进行初始化也可以后期通过addLayer方法进行添加
         controls: ol.control.defaults().extend([
           // mouse//鼠标经纬度

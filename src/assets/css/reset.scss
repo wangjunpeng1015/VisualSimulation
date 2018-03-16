@@ -38,8 +38,15 @@ input::-webkit-input-placeholder{
 /* 表格重置 */
 .wjptable{
 	width: 100%;
-	tr:nth-child(2n){
-		background-color: rgba(33,55,55,.5);
+	tr{
+		height: 48px;
+		td{
+			width: 50%;
+			text-align: center;
+		}
+		&:nth-child(2n){
+			background-color: rgba(33,55,55,.5);
+		}
 	}
 }
 .ivu-table-wrapper{

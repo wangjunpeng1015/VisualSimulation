@@ -40,7 +40,7 @@ axios.interceptors.request.use((config) => {
     }
     config.withCredentials = false;
     if(config.method != 'post'){
-        config.data = qs.stringify(config.data);
+      config.data = qs.stringify(config.data);
     }else{
 
     }
@@ -82,6 +82,7 @@ router.afterEach((to, from, next) => {
 })
 /*获取公用数据存入session*/
 function getDatabase(){
+  //获取国家
   axios.get('/CountryArea/GetTree').then(res=>{
     // let data = JSON.stringify(res.data);
     // sessionStorage.setItem('contry',data);
@@ -93,13 +94,25 @@ function getDatabase(){
         delete item.Code;
         if(item.children){
           newdata(item.children)
+        }else{
+          delete item.children;
         }
       })
     }
     newdata(res.data)
-    Vue.prototype.$baseData = res.data;
+    Vue.prototype.$contrys = res.data;
   },err=>{
-    // iview.$Notice.error({desc: '删除失败！'});
+    iview.$Notice.error({desc: '获取国家枚举失败！'});
+  })
+  //获取基础枚举
+  axios.get('EnumValue/GetEnumsObjs').then(res=>{
+    let baseData={};
+    res.data.forEach(item=>{
+      baseData[item.Name] = item.EnumValues;
+    })
+    Vue.prototype.$baseData = baseData;
+  },err=>{
+    iview.$Notice.error({desc: '获取基础枚举失败！'});
   })
 }
 getDatabase();
