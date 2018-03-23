@@ -5,8 +5,9 @@
       <div>
         <div class="contain-head layout-row" style="align-items:center;justify-content: space-between;">
           <h3>场景模型列表</h3>
-          <Button class="btn" @click="showDz = true"><Icon type="plus-round"></Icon></Button>
-          <Select v-model="scene" filterable style="width:150px">
+          <Button class="btn" @click="addScene"><Icon type="plus-round"></Icon></Button>
+          <Button class="btn" @click="deleteScene"><Icon type="minus-round"></Icon></Button>
+          <Select v-model="scene.Id" filterable @on-change='sceneChange' style="width:150px">
             <Option v-for="item in scenes" :value="item.value" :key="item.value">{{item.label}}</Option>
           </Select>
         </div>
@@ -26,7 +27,7 @@
         <div class="contain-head layout-row" style="justify-content: space-between;align-items:center;">
           <h3>场景搭载</h3>
           <div class="buttons">
-            <Button class="btn" @click="addScene">保存</Button>
+            <Button class="btn" @click="save">保存</Button>
           </div>
         </div>
       </div>
@@ -124,59 +125,30 @@ export default {
             key: 'value'
         }
       ],
+      //场景options
+      scenes:[],
       //场景所有信息
       scenesData:[],
       paramsData:{},
       /*当前场景*/
-      scene:'',
+      scene:{},
       /*场景树*/
-      sceneTree: [
-      {
-          title: 'parent 1',
-          expand: true,
-          children: [
-              {
-                  title: 'child 1-1',
-                  expand: true,
-                  children: [
-                      {
-                          title: 'leaf 1-1-1',
-                          expand: true
-                      },
-                      {
-                          title: 'leaf 1-1-2',
-                          expand: true
-                      }
-                  ]
-              },
-              {
-                  title: 'child 1-2',
-                  expand: true,
-              }
-          ]
-      }],
+      sceneTree: [],
       mxTree:[],
       //d3数据
       carryNodes: [],
-      //创建新场景返回数据
-      newSceneData:{}
+      //创建新场景数据
+      newSceneData:{
+        "Targets": []
+      },
+      isadd:false
     }
   },
   computed:{
-    scenes:function(){
-      let data = [];
-      this.scenesData.forEach(item=>{
-        data.push({
-          "label":item.Name,
-          "value":item.Id
-        })
-      })
-      return data;
-    },
     sceneData:function(){
       let data=[];
       for(let i=0;i<this.scenesData.length;i++){
-        if(this.scenesData[i].Id == this.scene){
+        if(this.scenesData[i].Id == this.scene.Id){
           data=[{
                 "key": '场景编号',
                 "value": this.scenesData[i].Id,
@@ -203,57 +175,86 @@ export default {
       this.getmxTree();
       //获取场景树
       this.getAllscene();
-    },
-    drawForce(){
+      this.drawForce([]);
+    },    
+    drawForce(data){
+      let nodes=[];
+      //转为d3force需要数据
+      function changechild(data){
+        data.forEach(item=>{
+          nodes.push(item);
+          if(item['搭载模型']){
+            changechild(item['搭载模型']);
+          }
+        })
+      }
+      function changeRoot(data){
+        data.forEach(item=>{
+          item.isRoot = true;
+          nodes.push(item);
+          if(item['搭载模型']){
+            changechild(item['搭载模型']);
+          }
+        })
+      }
+      changeRoot(data);
+      this.carryNodes = nodes;
       drawforce('d3box',this.carryNodes,this);
     },
     //场景切换
-    sceneChange(data){
-      debugger
-      this.$http.get(`/Scenes/GetScene/${id}`).then(res=>{
-        this.sceneTree = res.data;
-      },err=>{
-        this.$Notice.error({desc: '获取场景失败！'});
-      })
+    sceneChange(id){
+      //场景树
+      let newTree = (array)=>{
+        let data = [];
+        array.forEach(item=>{
+          let nodes={};
+          nodes.title = item['名称'];
+          nodes.expand = true;
+          if(item['搭载模型'] && item['搭载模型'].length>0){
+            nodes.children = newTree(item['搭载模型']);
+          }
+          data.push(nodes);
+        })
+        return data;
+      }
+      for(let i=0;i<this.scenesData.length;i++){
+        let node=this.scenesData[i]
+        if(node.Id == this.scene.Id && node.Targets.length>0){
+          this.scene = node;
+          this.sceneTree = newTree(node.Targets);
+          //渲染d3图
+          this.drawForce(node.Targets)
+          break;
+        }else{
+          this.sceneTree = [];
+        }
+      }
     },
     //获取全部场景信息
     getAllscene(){
       this.$http.get('/Scenes/GetScenes').then(res=>{
         this.scenesData = res.data;
+        //转换为下拉框格式
+        let data = [];
+        this.scenesData.forEach(item=>{
+          data.push({
+            "label":item.Name,
+            "value":item.Id
+          })
+        })
+        //选中最新场景
+        this.$set(this,'scenes',data);
+        if(data.length>0){
+          this.scene.Id = data[data.length-1].value;
+        }
       },err=>{
         this.$Notice.error({desc: '获取全部场景失败！'});
       })
     },
     //获取模型库数据
     getmxTree(){
-      this.mxTree = [{
-          title: 'parent 1',
-          expand: true,
-          children: [
-              {
-                  title: 'child 1-1',
-                  expand: true,
-                  children: [
-                      {
-                          title: 'leaf 1-1-1',
-                          expand: true
-                      },
-                      {
-                          title: 'leaf 1-1-2',
-                          expand: true
-                      }
-                  ]
-              },
-              {
-                  title: 'child 1-2',
-                  expand: true,
-              }
-          ]
-      }]
-      // this.drawForce();
       this.$http.get('/Template/GetTree').then(res=>{
         this.mxTree = res.data;
-        this.drawForce();
       },err=>{
 
         this.$Notice.error({desc: '获取模型库失败！'});
@@ -265,19 +266,10 @@ export default {
       this.$Modal.confirm({
           title: '添加场景',
           onOk:(val)=>{
-            let data = {
-              "Name": name,
-              "CreateTime": moment().format('YYYY-MM-DD HH:mm:ss'),
-              "Target": null
-            }
-            debugger
-            this.$http.post('/Scenes/PostScene',data).then(res=>{
-              this.newSceneData = res.data;
-              //todo
-              //更新场景，选中新建场景
-            },err=>{
-
-            })
+            this.showDz = true;
+            this.isadd = true;
+            this.newSceneData.name = name
+            this.drawForce(this.newSceneData.Targets);
           },
           render: (h) => {
             return h('div', [
@@ -291,8 +283,8 @@ export default {
                       },
                       class:'re-input',
                       on: {
-                          input: (val) => {
-                            name = val.data;
+                          blur: (val) => {
+                            name = val.currentTarget.value;
                           }
                       }
                   })
@@ -300,8 +292,58 @@ export default {
           }
       })
     },
+    //删除场景
+    deleteScene(){
+      this.$http.post(`/Scenes/DeleteScene/${this.scene.Id}`).then(res=>{
+        this.getAllscene();
+        this.$Notice.success({desc: `删除场景${this.scene.Name}成功！`});
+      },err=>{
+        this.$Notice.error({desc: `删除场景${this.scene.Name}失败！`});
+      })
+    },
+    //保存场景信息
+    save(){
+      let tempdata;
+      if(!this.isadd){//修改
+        tempdata = this.scene;
+      }else{//新增
+        this.newSceneData = Object.assign(this.newSceneData,{
+          "CreateTime": moment().format('YYYY-MM-DD HH:mm:ss'),
+        })
+        tempdata = this.newSceneData;
+      }
+      let target = _.cloneDeep(this.carryNodes);
+      tempdata.Targets = [];
+      tempdata.CreateTime = moment(tempdata.CreateTime).format('YYYY-MM-DD HH:mm:ss');
+      let temp=[];
+      for(let i=0;i<target.length;i++){
+        delete target[i].index;
+        delete target[i].vx;
+        delete target[i].vy;
+        delete target[i].x;
+        delete target[i].y;
+        delete target[i].fx;
+        delete target[i].fy;
+        delete target[i].isRoot;
+        if(i>0){
+          temp.push(target[i]);
+        }else{
+          tempdata.Targets.push(target[i]);
+         tempdata.Targets[0]['搭载模型'] = temp;
+        }
+      }
+      debugger
+      this.$http.post('/Scenes/PostScene',tempdata).then(res=>{
+        this.getAllscene();
+        this.isadd = false;
+        this.$Notice.success({desc: '保存成功！'});
+      },err=>{
+        this.isadd = false;
+        this.$Notice.error({desc: '保存失败！'});
+      })
+    },
     //获取模型配置参数
-    getParam(code,position){
+    getParam(code,position=[0,0]){
       //展开搭载
       this.showDz = false;
       this.$http.get(`/Template/GetModelByCode?code=${code}`).then(res=>{
@@ -310,8 +352,8 @@ export default {
         for (let i=2;i<zbgjs.length+1;i+=2) {
           this.param.zbgj.push(zbgjs.substr(0,i));
         }
-        res.data['当前位置'] = `纬度: ${position[1]}, 经度: ${position[0]}`
-        res.data['部署位置'] = `纬度: ${position[1]}, 经度: ${position[0]}`
+        // res.data['当前位置'] = `纬度: ${position[1]}, 经度: ${position[0]}`
+        // res.data['部署位置'] = `纬度: ${position[1]}, 经度: ${position[0]}`
         this.param.dwsx = res.data['敌我属性'];
         //删除需要修改的属性
         delete res.data['装备国家'];

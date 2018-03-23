@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 // import picUrl from ''
 //图片地址json
 import equipUrl from '../../../static/baseUrl.json'
- //type：外框图片    lx：内图片
+ //isRoot：外框图片    lx：内图片
 
 //图片Url地址
 const picUrl = {
@@ -19,6 +19,12 @@ const picUrl = {
 	}
 }
 export const drawforce= function (id,nodes,scope){
+	if(!nodes && typeof(nodes)!=='object') {
+		debugger
+		eventdrag()
+		return ;
+	}
+
 	//构建连接线link
 	let links = [];
 	for(let i=1;i<nodes.length;i++){
@@ -29,7 +35,7 @@ export const drawforce= function (id,nodes,scope){
 
 	let width = $("#"+id).width();
 	let height = $("#"+id).height();
-
+	d3.select('svg').remove();
 	var svg = d3.select("#"+id).append("svg")
 				.attr("width",width).attr("height",height)
 				
@@ -80,12 +86,12 @@ export const drawforce= function (id,nodes,scope){
 	              .classed("main", d=>{
  	              	return d.lx == '00';
  	              })
- 	              .on("mouseenter",d=>{
+ 	              .on("mouseover",d=>{
+ 	              	console.log('in')
               		selectData = d;
-					console.log('in')
 	              })
-	              .on("mouseleave",d=>{
-              		console.log('out')
+	              .on("mouseout",d=>{
+	              	console.log('out')
   					selectData = null;
 	              })
 	              .on("dblclick ",d=>{
@@ -96,26 +102,39 @@ export const drawforce= function (id,nodes,scope){
 	//单个节点中装备类型图片
     var node1 = singlegroup.append('image')
  	              .attr("width",d=>{
- 	              	return d.lx == '00'?equipUrl[d.lx].width:'50';
+ 	              	return getMxType(d['编号']) == '00'?equipUrl[getMxType(d['编号'])].width:'50';
  	              }).attr("height",d=>{
- 	              	return d.lx == '00'?equipUrl[d.lx].height:'50';
+ 	              	return getMxType(d['编号']) == '00'?equipUrl[getMxType(d['编号'])].height:'50';
  	              })
- 	              
  	              .attr('xlink:href', function(d) {
- 					return equipUrl[d.lx].url;
+ 					return equipUrl[getMxType(d['编号'])].url;
 				  })
     //单个节点中装备背景
 	var node = singlegroup.append('image')
-
 	              .attr("width",d=>{
-	              	return picUrl[d.type].width/2;
+	              	return d.isRoot?picUrl['00'].width/2:picUrl['01'].width/2;
 	              })
 	              .attr('class',d=>{
-	              	return d.type=='00'?'aircraft':'equip';
+	              	return d.isRoot?'aircraft':'equip';
 	              })
 	              .attr('xlink:href', function(d) {
-					return picUrl[d.type].url;
+					return d.isRoot?picUrl['00'].url:picUrl['01'].url;
 					  })
+	//删除节点
+	var del = singlegroup.append("rect")
+	              .attr("class","del")
+                  // .style("display","none")
+	              .attr('width',20)
+	              .attr('height',15)
+	              .attr("fill", "yellow")
+	              // .attr('stroke-width', 2)
+	              .on('click',d=>{
+	              	alert('删除')
+	              });
+	              // del.append('text')
+	              // .attr("x", -10)
+	              // .text('删除')
+	              
 
 	              
     //节点名称
@@ -124,12 +143,12 @@ export const drawforce= function (id,nodes,scope){
 				  .enter().append('text')
 				  .style('fill','#91FFFF')
 				  .text(d=>{
-				  	return d.name;
+				  	return d['名称'];
 				  })
 	
 	//给节点添加title
 	node.append('title')
-	    .text(function(d) { return d.name; });
+	    .text(function(d) { return d['名称']; });
 
 	simulation
 	    .nodes(nodes)
@@ -146,20 +165,29 @@ export const drawforce= function (id,nodes,scope){
 			.attr('y2', function(d) { return d.target.y; })
 		//更新节点装备位置
 		node.attr('x', function(d) {
-				return d.type=='00'?d.x - picUrl[d.type].width/4:d.x - picUrl[d.type].width/4;
+			    let type = d.isRoot?'00':'01';
+				return d.isRoot?d.x - picUrl[type].width/4:d.x - picUrl[type].width/4;
 			})
 			.attr('y', function(d) {
-				return d.type=='00'?d.y - picUrl[d.type].height/4:d.y - picUrl[d.type].height/4;
+				let type = d.isRoot?'00':'01';
+				return d.isRoot?d.y - picUrl[type].height/4:d.y - picUrl[type].height/4;
 			})
 		node1.attr('x', function(d) {
-				return d.x - equipUrl[d.lx].width/4;
+				let type = getMxType(d['编号']);
+				return d.x - equipUrl[type].width/4;
 			})
 			.attr('y', function(d) {
 				return d.y - 30;
 			})
+		del.attr('x', function(d) {
+				return d.x;
+			})
+			.attr('y', function(d) {
+				return d.y;
+			})
 		//更新节点文字位置
 		nodetext.attr('x',d=>{
-				return d.x - (d.name.length)*6/2;
+				return d.x - (d['名称'].length)*6/2;
 			})
 			.attr('y',d=>{
 				return d.y + 40;
@@ -171,21 +199,22 @@ export const drawforce= function (id,nodes,scope){
 	  setTimeout(()=>{
 	      d3.selectAll('.dragtree').selectAll('.ivu-tree-title').call(d3.drag()
 	          .on("start", function(d) {
-	          	let name = d3.select(this).text();
+	          	console.log(1111)
 				let code = d3.select(this).attr('code');
-				let temp = {
-					"name":name,
-					"code":code
-				}
-      		  	tempData = getTempData(temp);
-	          	if(scope.showDz){
-	          		
-	          	}else{
-	              tempNode = getTempNode(tempData);
-	          	}
+  		  		getTempData(code).then(res=>{
+  		  			tempData = res;	
+		            tempNode = getTempNode(tempData);
+		          	if(scope.showDz){
+		          		
+		          	}else{
+
+		          	}
+  		  		});
+      		  	//判断拉取的模型是否有数据
 	            d3.event.sourceEvent.stopPropagation();
 	          })
 	          .on("drag", function(d) {
+	          	if(!tempData) return;
 	          	if(scope.showDz){
 
 	          	}else{
@@ -204,26 +233,31 @@ export const drawforce= function (id,nodes,scope){
 	          	}
 	          })
 	          .on("end", function(d) {
+	          	  if(!tempData) return;
 	          	  if(scope.showDz){
-		          		let position = mainmap.position;
-		          		let data = [{
-					          "name":name,
-					          population:'',
-					          lx:'0',//图片类型
-					          zy:'0',//阵营
-					          lon:parseFloat(position[0]),
-					          lat:parseFloat(position[1]) 
-					       }
-					     ]
-		          		mainmap.drawStatic(data);
-					     //搭载创建根节点
-					    let temp = _.cloneDeep(tempData);
-					    temp.type = "00";
-		          		nodes.push(temp);
-		              	update();
-
-						//调用页面新建场景
-		          		scope.addScene(temp.code);//code,经纬度
+          	  		let code = d3.select(this).attr('code');
+	          		let position = mainmap.position;
+	          		let data = [{
+				          "name":name,
+				          population:'',
+				          lx:'0',//图片类型
+				          zy:'0',//阵营
+				          lon:parseFloat(position[0]),
+				          lat:parseFloat(position[1]) 
+				       }
+				     ]
+	          		mainmap.drawStatic(data);
+				     //搭载创建根节点
+				    let temp = _.cloneDeep(tempData);
+				    temp['部署位置'] = {
+				    	'经度':position[0],
+				    	'纬度':position[1],
+				    }
+				    temp['isRoot'] = true;
+	          		nodes.push(temp);
+	              	update();
+					//调用页面获取模型信息
+	          		scope.getParam(code,position);//code,经纬度
 		          		
 	          	  }else{
 		              //判断最后是否在场景中且移动到某个节点中否则删除
@@ -232,8 +266,7 @@ export const drawforce= function (id,nodes,scope){
 		              var newNode = tempNode._groups[0][0];
 		              if(relCoords[0]>0 && relCoords[1]>0 && relCoords[0]<width && relCoords[1]<height && selectData!==null){
 		              	// selectData
-		              	if(selectData.type == '00'){
-				          	
+		              	if(selectData.isRoot){
 		              		//先删除svg重绘
 			              	nodes.push(tempData)
 			              	update();
@@ -254,13 +287,9 @@ export const drawforce= function (id,nodes,scope){
 		d3.selectAll('svg').remove();
 		drawforce(id,nodes,scope);//更新d3画图
 	}
-	function getTempData(d) {
-	      return {
-	          "name": d.name,
-	          "type": "01",
-	          "code":d.code,
-	          "lx":getlx(d.code)
-	      }
+	async function getTempData(code) {
+		let {data} = await scope.$http.get(`/Template/GetModelByCode?code=${code}`);
+     	return data;
 	}
 	//拖动图片类型
 	let getlx = (code)=>{
@@ -272,7 +301,24 @@ export const drawforce= function (id,nodes,scope){
 			return '';
 		}
 	}
+	//判断模型类型
+	function getMxType(num){
+		let type = num.substr(4);
+		if(type.startsWith('0202')){//航母
+			return '00'
+		}else if(type.startsWith('0201')){
+			return '02'
+		}else if(type.startsWith('0301')){
+			return '06'
+		}else if(type.startsWith('0204')){
+			return '07'
+		}else{
+			return '01'
+		}
+	}
+	//构造拖动节点
 	function getTempNode(data) {
+		  let type = getMxType(data['编号']);
 	      var g = d3.select('svg .nodes')
 	      	  .append('g')
 	          .data([data])
@@ -287,12 +333,12 @@ export const drawforce= function (id,nodes,scope){
     		
     	    g.append('image')
 	              .attr("width",d=>{
-	              	return d.lx == '00'?equipUrl[d.lx].width:'50';
+	              	return type == '00'?equipUrl[type].width:'50';
 	              }).attr("height",d=>{
-	              	return d.lx == '00'?equipUrl[d.lx].height:'50';
+	              	return type == '00'?equipUrl[type].height:'50';
 	              })
 	              .attr('xlink:href', function(d) {
-					return equipUrl[d.lx].url;
+					return equipUrl[type].url;
 			  })
 
 	      return g;

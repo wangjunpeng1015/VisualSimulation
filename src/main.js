@@ -105,7 +105,7 @@ function getDatabase(){
     iview.$Notice.error({desc: '获取国家枚举失败！'});
   })
   //获取基础枚举
-  axios.get('EnumValue/GetEnumsObjs').then(res=>{
+  axios.get('/EnumValue/GetEnumsObjs').then(res=>{
     let baseData={};
     res.data.forEach(item=>{
       baseData[item.Name] = item.EnumValues;

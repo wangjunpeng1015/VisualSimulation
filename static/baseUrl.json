@@ -33,5 +33,15 @@
         "url": "static/image/塔康.png",
         "width": "156",
         "height": "106"
+    },
+    "06": {
+        "url": "static/image/运8飞机.png",
+        "width": "97",
+        "height": "40"
+    },
+    "07": {
+        "url": "static/image/驱逐舰.png",
+        "width": "72",
+        "height": "37"
     }
 }
