@@ -129,7 +129,7 @@ export default {
       scenes:[],
       //场景所有信息
       scenesData:[],
-      paramsData:{},
+      paramsDatas:{},
       /*当前场景*/
       scene:{},
       /*场景树*/
@@ -142,9 +142,26 @@ export default {
         "Targets": []
       },
       isadd:false
+    } 
+  },
+  watch:{
+    'param.zbgj':function(newval,oldval){
+      this.paramsDatas['装备国家'] = newval[newval.length-1];
+    },
+    'param.dwsx':function(newval,oldval){
+      this.paramsDatas['敌我属性'] = newval;
     }
   },
   computed:{
+    paramsData:function(){
+      let tempdata = {};
+      _.forEach(this.paramsDatas,(value,key)=>{
+        if(key!="搭载模型" && key!="index" && key!="vx"&& key!="vy"&& key!="x"&& key!="y"&& key!="fx"&& key!="fy"&& key!="isRoot"){
+          tempdata[key] = value;
+        }
+      })
+      return tempdata;
+    },
     sceneData:function(){
       let data=[];
       for(let i=0;i<this.scenesData.length;i++){
@@ -218,8 +235,8 @@ export default {
         return data;
       }
       for(let i=0;i<this.scenesData.length;i++){
-        let node=this.scenesData[i]
-        if(node.Id == this.scene.Id && node.Targets.length>0){
+        let node = Object.assign({},this.scenesData[i]);
+        if(node.Id == id && node.Targets.length>0){
           this.scene = node;
           this.sceneTree = newTree(node.Targets);
           //渲染d3图
@@ -256,7 +273,6 @@ export default {
       this.$http.get('/Template/GetTree').then(res=>{
         this.mxTree = res.data;
       },err=>{
-
         this.$Notice.error({desc: '获取模型库失败！'});
       })
     },
@@ -294,7 +310,7 @@ export default {
     },
     //删除场景
     deleteScene(){
-      this.$http.post(`/Scenes/DeleteScene/${this.scene.Id}`).then(res=>{
+      this.$http.delete(`/Scenes/DeleteScene/${this.scene.Id}`).then(res=>{
         this.getAllscene();
         this.$Notice.success({desc: `删除场景${this.scene.Name}成功！`});
       },err=>{
@@ -332,7 +348,6 @@ export default {
          tempdata.Targets[0]['搭载模型'] = temp;
         }
       }
-      debugger
       this.$http.post('/Scenes/PostScene',tempdata).then(res=>{
         this.getAllscene();
         this.isadd = false;
@@ -343,25 +358,22 @@ export default {
       })
     },
     //获取模型配置参数
-    getParam(code,position=[0,0]){
+    getParam(data){
+      //装备国家，敌我属性
+      
+      let zbgjs = data['装备国家'];
+      for (let i=2;i<zbgjs.length+1;i+=2) {
+        this.param.zbgj.push(zbgjs.substr(0,i));
+      }
+
+      this.param.dwsx = data['敌我属性'];
+      //删除需要修改的属性
+      delete data['装备国家'];
+      delete data['敌我属性'];
+
+      this.paramsDatas = data;
       //展开搭载
       this.showDz = false;
-      this.$http.get(`/Template/GetModelByCode?code=${code}`).then(res=>{
-        //装备国家，敌我属性
-        let zbgjs = res.data['装备国家'];
-        for (let i=2;i<zbgjs.length+1;i+=2) {
-          this.param.zbgj.push(zbgjs.substr(0,i));
-        }
-        // res.data['当前位置'] = `纬度: ${position[1]}, 经度: ${position[0]}`
-        // res.data['部署位置'] = `纬度: ${position[1]}, 经度: ${position[0]}`
-        this.param.dwsx = res.data['敌我属性'];
-        //删除需要修改的属性
-        delete res.data['装备国家'];
-        delete res.data['敌我属性'];
-        this.paramsData = res.data;
-      },err=>{
-
-      })
     },
   }
 }

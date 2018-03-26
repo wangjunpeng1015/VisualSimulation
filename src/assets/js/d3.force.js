@@ -20,7 +20,6 @@ const picUrl = {
 }
 export const drawforce= function (id,nodes,scope){
 	if(!nodes && typeof(nodes)!=='object') {
-		debugger
 		eventdrag()
 		return ;
 	}
@@ -38,7 +37,12 @@ export const drawforce= function (id,nodes,scope){
 	d3.select('svg').remove();
 	var svg = d3.select("#"+id).append("svg")
 				.attr("width",width).attr("height",height)
-				
+	$('svg').on('contextmenu',(e)=>{
+		return false;
+	})
+	$('svg').on('click',(e)=>{
+		rightMenu.style('display','none');
+	})
 	let groupG = svg.append('g')
   
 	//拖拽
@@ -76,6 +80,48 @@ export const drawforce= function (id,nodes,scope){
 	//大节点组
 	var nodegroup = groupG.append('g')
 	              .attr('class', 'nodes')
+	//右键菜单
+	var rightMenu = svg.append("g")
+                    .attr("class","del")
+                    .style("display","none")
+                    .style("cursor","pointer");
+                rightMenu.append("rect")
+                    .attr('class', 'delete')
+                    .attr('width', 50)
+                    .attr('height', 30)
+                    .attr("rx", '4px')
+                    .attr("ry", '4px')
+                    .style("fill", "#fff");
+                rightMenu.append("text")
+                    .attr("x", 25)
+                    .attr("dy", 21)
+                    .attr("text-anchor", "middle")
+                    .text("删 除")
+                    .style("fill","#000")
+                    .style("fill-opacity","0.8")
+
+	function rightclick(d){
+		rightMenu.style("display","block")
+		.attr('transform', function() {
+		    return ("transform", "translate("+d.x+","+d.y+")")
+		}).on("click",function(){
+		    deleteNode(d);
+		    rightMenu.style("display","none")
+		});
+	}
+
+	function deleteNode(d){
+		// nodes = nodes.filter(item=>{
+		// 	return item.index!==d.index;
+		// })
+
+		for(let i=0;i<nodes.length;i++){
+			if(nodes[i].index == d.index){
+				nodes.splice(i,1);
+			}
+		}
+		update();
+	}
 
 	//单个节点组     
 	var singlegroup = nodegroup.selectAll('g')
@@ -95,7 +141,10 @@ export const drawforce= function (id,nodes,scope){
   					selectData = null;
 	              })
 	              .on("dblclick ",d=>{
-	              	scope.getParam(d.code);
+	              	scope.getParam(d);
+	              })
+	              .on("contextmenu",d=>{
+	              	rightclick(d);
 	              })
 	              .call(drag)
 
@@ -120,21 +169,6 @@ export const drawforce= function (id,nodes,scope){
 	              .attr('xlink:href', function(d) {
 					return d.isRoot?picUrl['00'].url:picUrl['01'].url;
 					  })
-	//删除节点
-	var del = singlegroup.append("rect")
-	              .attr("class","del")
-                  // .style("display","none")
-	              .attr('width',20)
-	              .attr('height',15)
-	              .attr("fill", "yellow")
-	              // .attr('stroke-width', 2)
-	              .on('click',d=>{
-	              	alert('删除')
-	              });
-	              // del.append('text')
-	              // .attr("x", -10)
-	              // .text('删除')
-	              
 
 	              
     //节点名称
@@ -179,12 +213,6 @@ export const drawforce= function (id,nodes,scope){
 			.attr('y', function(d) {
 				return d.y - 30;
 			})
-		del.attr('x', function(d) {
-				return d.x;
-			})
-			.attr('y', function(d) {
-				return d.y;
-			})
 		//更新节点文字位置
 		nodetext.attr('x',d=>{
 				return d.x - (d['名称'].length)*6/2;
@@ -199,7 +227,6 @@ export const drawforce= function (id,nodes,scope){
 	  setTimeout(()=>{
 	      d3.selectAll('.dragtree').selectAll('.ivu-tree-title').call(d3.drag()
 	          .on("start", function(d) {
-	          	console.log(1111)
 				let code = d3.select(this).attr('code');
   		  		getTempData(code).then(res=>{
   		  			tempData = res;	
@@ -209,6 +236,8 @@ export const drawforce= function (id,nodes,scope){
 		          	}else{
 
 		          	}
+  		  		}).catch(err=>{
+  		  			scope.$Notice.error({desc: '获取模型信息失败！'});
   		  		});
       		  	//判断拉取的模型是否有数据
 	            d3.event.sourceEvent.stopPropagation();
@@ -245,19 +274,16 @@ export const drawforce= function (id,nodes,scope){
 				          lon:parseFloat(position[0]),
 				          lat:parseFloat(position[1]) 
 				       }
-				     ]
+				    ]
 	          		mainmap.drawStatic(data);
 				     //搭载创建根节点
 				    let temp = _.cloneDeep(tempData);
-				    temp['部署位置'] = {
-				    	'经度':position[0],
-				    	'纬度':position[1],
-				    }
+				    temp['部署位置'] = `${position[0]},${position[1]}`;
 				    temp['isRoot'] = true;
 	          		nodes.push(temp);
 	              	update();
 					//调用页面获取模型信息
-	          		scope.getParam(code,position);//code,经纬度
+	          		scope.getParam(temp);//code,经纬度
 		          		
 	          	  }else{
 		              //判断最后是否在场景中且移动到某个节点中否则删除

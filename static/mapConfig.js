@@ -441,6 +441,15 @@ function initMap(id){
       });
       map.addLayer(staticLayer);
     },
+    //画航迹点
+    draline(){
+      let draw; // global so we can remove it later
+      draw = new ol.interaction.Draw({
+        source: source,
+        type: typeSelect.LineString
+      });
+      map.addInteraction(draw);
+    }
   }
   return objInstance;
 }
