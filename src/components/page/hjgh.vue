@@ -121,6 +121,12 @@ export default {
         {id: 5,group:'预警机', content: 'item 5', start: '2018-04-25'},
         {id: 6,group:'航母', content: 'item 6', start: '2018-04-27'}
       ]
+      // let stages = [
+      //   {id: 'A', content: '', start: '2018-03-14', end: '2018-05-22', type: 'background',className:'stage1'},
+      //   {id: 'B', content: '', start: '2018-04-14', end: '2018-05-22', type: 'background',className:'stage2'}
+      //   {id: 'C', content: '', start: '2018-05-14', end: '2018-05-22', type: 'background',className:'stage3'}
+      // ]
+      
       // 获取分组
       let groups = new vis.DataSet();
       let group = _.groupBy(data,'group');
@@ -143,8 +149,23 @@ export default {
           type: item.type || 'point'
         });
       })
-
-      /*添加数据任务阶段*/
+      //添加任务阶段
+      // _.forEach(group,(value,key)=>{
+      //   timeData.add({
+      //     id: key, 
+      //     group:key,
+      //     content: '', 
+      //     start: start, 
+      //     end: end, 
+      //     type: 'background',
+      //     className:((data)=>{
+      //       console.log(value,key)
+      //       debugger
+      //       return 'nativa';
+      //     })()
+      //   })
+      // })
+      /*添加数据任务阶段--*/
       _.forEach(group,(value,key)=>{
         let start = _.minBy(value,'start').start;
         let end = _.maxBy(value,'start').start;
@@ -155,9 +176,11 @@ export default {
           start: start, 
           end: end, 
           type: 'background',
-          className:(data)=>{
+          className:((data)=>{
+            console.log(value,key)
+            debugger
             return 'nativa';
-          }
+          })()
         })
       })
       

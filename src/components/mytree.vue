@@ -15,9 +15,6 @@
 import * as d3 from 'd3';
 
 let id = 1000
-let fromData = ''
-let toData = ''
-let fromParentModelChildren = ''  // from 节点的父组件的model
 let nodeClicked = undefined   // Attention: 递归的所有组件共享同一个＂顶级作用域＂（这个词或许不太正确，但就这个意思）．即：共享上面这几个let变量．这为实现当前节点的高亮提供了基础．
 
 export default {
@@ -26,10 +23,6 @@ export default {
         return {
             open: false,
             isClicked: false,
-            styleObj: {
-            },
-            //是否在拖动
-            isDrag:false
         }
     },
     props: {
@@ -147,53 +140,6 @@ export default {
             }
             return that
         },
-        dragStart(e,params) {
-            let ins = this;
-            // fromData = this.model
-            e.dataTransfer.effectAllowed = "move";
-            e.dataTransfer.setData("nottext", e.target.innerHTML);
-
-            ins.isDrag = true;
-
-            //开始创建d3拖动
-            let node = d3.select('image').call(d3.drag()
-                  .on('start', function (d) {
-                        d.fx = d.x;
-                        d.fy = d.y;
-                        d3.event.sourceEvent.stopPropagation();
-                    })
-                  .on('drag', function (d) {
-                        d.fx = d3.event.x;
-                        d.fy = d3.event.y;
-                    })
-                  .on('end', function (d) {
-                        d.fx = null;
-                        d.fy = null;
-                    }));
-
-            node.attr("width",d=>{
-                    return 50;
-                })
-                .attr('xlink:href',d=>{
-                    return 'static/image/equipbox.png'
-                })
-                .call(drag)
-                .on('click',d=>{
-                            alert(111)
-                        })
-
-            return true
-        },
-        draging(e,params){
-        },
-        dragEnd(e) {
-            this.isDrag = false;
-            fromData = undefined
-            toData = undefined
-            fromParentModelChildren = undefined
-        },
-        //给树添加d3拖拽事件
-        
     },
 }
 </script>

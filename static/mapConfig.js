@@ -1,3 +1,6 @@
+/*
+  ----所有图层layers都要加上对应id方便管理
+ */
 const config = require('../static/config')//引入配置文件
 
 const json = require('../static/planjson.json')
@@ -68,7 +71,6 @@ function initMap(id){
     $(map.getViewport()).on("contextmenu", e=> {
       e.preventDefault();
       map.forEachFeatureAtPixel(map.getEventPixel(e), function (feature, layer) {
-          // map.removeLayer(layer)//删除layer
           console.log(feature)
           console.log(layer)
       });
@@ -84,7 +86,7 @@ function initMap(id){
     map,
     position:'',
     /*控制地图缩放*/
-    controlZoom(zoom){
+    controlZoom(zoom){//zoom为数字
       map.setView(new ol.View({
         zoom: zoom,
       }));
@@ -186,6 +188,7 @@ function initMap(id){
         wrapX: false
       });
       var vector = new ol.layer.Vector({
+        id:'',
         source: source
       });
       map.addLayer(vector);
@@ -219,7 +222,27 @@ function initMap(id){
                 color: 'rgba(255, 0, 0, ' + opacity + ')',
                 width: 0.25 + opacity
               })
+            }),
+            image: new ol.style.Circle({
+              radius: radius-1,
+              snapToPixel: false,
+              stroke: new ol.style.Stroke({
+                color: 'rgba(255, 0, 0, ' + opacity + ')',
+                width: 0.25 + opacity
+              })
             })
+            // image: new ol.style.RegularShape({
+            //      radius: radius,
+            //      angle: 10,
+            //      stroke: new ol.style.Stroke({
+            //          color: 'rgba(255, 0, 0, ' + opacity + ')'
+            //      }),
+            //      fill: new ol.style.Fill({
+            //          color: 'rgba(255, 0, 0, ' + opacity + ')'
+            //      }),
+            //      points: 3,
+            //      rotation: 0.6
+            //  })
           });
 
           vectorContext.setStyle(style);
@@ -287,6 +310,7 @@ function initMap(id){
       var speed, now;
 
       var vectorLayer = new ol.layer.Vector({
+        id:'',
         source: new ol.source.Vector({
           features: [ geoMarker, startMarker, endMarker]
         }),
@@ -437,11 +461,12 @@ function initMap(id){
         vectorSource.addFeature(iconFeature)
       })
       let staticLayer = new ol.layer.Vector({
+        id:'',
         source:vectorSource
       });
       map.addLayer(staticLayer);
     },
-    //画航迹点
+    //画航迹点（未完成）
     draline(){
       let draw; // global so we can remove it later
       draw = new ol.interaction.Draw({
@@ -449,6 +474,21 @@ function initMap(id){
         type: typeSelect.LineString
       });
       map.addInteraction(draw);
+    },
+    //画扇形
+    drawSector(r=15){
+      
+    },
+    //通过id删除layers
+    removeLayer(ids){
+      let layers = map.getLayers();
+      layers.forEach(item=>{
+        ids.forEach(id=>{
+          if(id == item.get('id')){
+            map.removeLayer(item);
+          }
+        })
+      })
     }
   }
   return objInstance;

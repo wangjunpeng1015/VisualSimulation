@@ -4,6 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',//使用路由的history模式 这种模式充分利用了history.pushState API来完成URL的跳转而不需要重新加载页面(history模式和hash模式)
   routes: [
     /*测试*/
     {

@@ -145,9 +145,11 @@ export default {
     } 
   },
   watch:{
+    //将当前装备国家下拉框值赋给当前所点击的模型信息
     'param.zbgj':function(newval,oldval){
       this.paramsDatas['装备国家'] = newval[newval.length-1];
     },
+    //将当前敌我属性下拉框值赋给当前所点击的模型信息
     'param.dwsx':function(newval,oldval){
       this.paramsDatas['敌我属性'] = newval;
     }
@@ -187,6 +189,7 @@ export default {
       this.init();
   },
   methods:{
+    //初始化
     init(){
       //获取模型树
       this.getmxTree();
@@ -194,6 +197,7 @@ export default {
       this.getAllscene();
       this.drawForce([]);
     },    
+    //画搭载关系
     drawForce(data){
       let nodes=[];
       //转为d3force需要数据
@@ -328,10 +332,12 @@ export default {
         })
         tempdata = this.newSceneData;
       }
+      //克隆数据避免操作后数据发生变化
       let target = _.cloneDeep(this.carryNodes);
       tempdata.Targets = [];
       tempdata.CreateTime = moment(tempdata.CreateTime).format('YYYY-MM-DD HH:mm:ss');
       let temp=[];
+      //删除后台不需要的参数
       for(let i=0;i<target.length;i++){
         delete target[i].index;
         delete target[i].vx;
@@ -344,7 +350,7 @@ export default {
         if(i>0){
           temp.push(target[i]);
         }else{
-          tempdata.Targets.push(target[i]);
+         tempdata.Targets.push(target[i]);
          tempdata.Targets[0]['搭载模型'] = temp;
         }
       }
