@@ -177,7 +177,7 @@
                   authority:res.data.Role,
                   isLogin:true
                 };
-                this.$store.commit('changeUser',userInfo);
+                this.$store.commit('changeUser',userInfo.username);
                 //改变vuex中存的user
                 //登录成功跳转主页
                 this.$router.push('/main');

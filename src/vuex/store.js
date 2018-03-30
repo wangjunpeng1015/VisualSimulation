@@ -11,7 +11,7 @@ const store = new Vuex.Store({
                   authority:0,
                   isLogin:true
                 },
-  //改变 state 的一些方法
+  //改变 state 的一些方法(同步)
   mutations:{
     //改变登录用户
 	  changeUser(state,params){
@@ -22,7 +22,7 @@ const store = new Vuex.Store({
 	      state.count-=1;
 	  }
   },
-  //管理触发mutations条件的
+  //管理触发mutations条件的（不受限制 一般是异步）
   action:{
 
   },

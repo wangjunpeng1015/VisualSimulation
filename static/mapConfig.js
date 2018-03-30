@@ -188,7 +188,7 @@ function initMap(id){
         wrapX: false
       });
       var vector = new ol.layer.Vector({
-        id:'',
+        id:'Aperture',
         source: source
       });
       map.addLayer(vector);
@@ -198,6 +198,8 @@ function initMap(id){
             'EPSG:4326', 'EPSG:3857'));
         var feature = new ol.Feature(geom);
         source.addFeature(feature);
+        flash(feature)
+
       }
 
       var duration = 3000;
@@ -222,27 +224,7 @@ function initMap(id){
                 color: 'rgba(255, 0, 0, ' + opacity + ')',
                 width: 0.25 + opacity
               })
-            }),
-            image: new ol.style.Circle({
-              radius: radius-1,
-              snapToPixel: false,
-              stroke: new ol.style.Stroke({
-                color: 'rgba(255, 0, 0, ' + opacity + ')',
-                width: 0.25 + opacity
-              })
             })
-            // image: new ol.style.RegularShape({
-            //      radius: radius,
-            //      angle: 10,
-            //      stroke: new ol.style.Stroke({
-            //          color: 'rgba(255, 0, 0, ' + opacity + ')'
-            //      }),
-            //      fill: new ol.style.Fill({
-            //          color: 'rgba(255, 0, 0, ' + opacity + ')'
-            //      }),
-            //      points: 3,
-            //      rotation: 0.6
-            //  })
           });
 
           vectorContext.setStyle(style);
@@ -257,10 +239,9 @@ function initMap(id){
         }
         listenerKey = map.on('postcompose', animate);
       }
-
-      source.on('addfeature', function(e) {
-        flash(e.feature);
-      });
+      // source.on('addfeature', function(e) {
+      //   flash(e.feature);
+      // });
       addRandomFeature();
     },
     /*画飞机移动*/
@@ -312,7 +293,7 @@ function initMap(id){
       var vectorLayer = new ol.layer.Vector({
         id:'',
         source: new ol.source.Vector({
-          features: [ geoMarker, startMarker, endMarker]
+          features: [geoMarker]
         }),
         style: function(feature) {
           // hide geoMarker if animation is active
@@ -329,6 +310,7 @@ function initMap(id){
         var frameState = event.frameState;
 
         if (animating) {
+
           var elapsedTime = frameState.time - now;
           // here the trick to increase speed is to jump some indexes
           // on lineString coordinates
@@ -340,20 +322,26 @@ function initMap(id){
           }
 
           var currentPoint = new ol.geom.Point(routeCoords[index]);
-          var feature = new ol.Feature(currentPoint);
+          var planfeature = new ol.Feature(currentPoint);
 
           let position = routeCoords[index];
           let lastposition = index==0?[0,0]:routeCoords[index-1];
           var rotation = Math.atan2(position[1]-lastposition[1], position[0]-lastposition[0]);
           let style = new ol.style.Style({
+            //飞机图片
             image: new ol.style.Icon({
-              anchor: [0.5, 1],
+              anchor: [0.5, 0.5],
               src: 'static/image/plan.png',
               rotateWithView: true,
-              rotation: -rotation
+              rotation: -rotation//旋转角度
             })
           })
-          vectorContext.drawFeature(feature, style);
+
+          vectorContext.drawFeature(planfeature, style);
+          //发波
+          debugger
+          objInstance.drawSector(position,50,100,100,50);//经纬度，方位角度，半径，弧度（[137,37],50,100,100,50）
+
         }
         // tell OpenLayers to continue the postcompose animation
         map.render();
@@ -382,8 +370,7 @@ function initMap(id){
 
         // if animation cancelled set the marker at the beginning
         var coord = ended ? routeCoords[routeLength - 1] : routeCoords[0];
-        /** @type {ol.geom.Point} */ (geoMarker.getGeometry())
-            .setCoordinates(coord);
+        (geoMarker.getGeometry()).setCoordinates(coord);
         //remove listener
         map.un('postcompose', moveFeature);
       }
@@ -475,12 +462,8 @@ function initMap(id){
       });
       map.addInteraction(draw);
     },
-    //画扇形
-    drawSector(r=15){
-      
-    },
     //通过id删除layers
-    removeLayer(ids){
+    removeLayer(ids){//ids为id数组
       let layers = map.getLayers();
       layers.forEach(item=>{
         ids.forEach(id=>{
@@ -489,6 +472,69 @@ function initMap(id){
           }
         })
       })
+    },
+    //画扇形波
+    drawSector(position,azimuth,optrange,lobewith){//经纬度，方位角度，半径，弧度（[137,37],50,100,100,50）
+      azimuth = azimuth - lobewith/2;
+      var calc = function(step){
+        /*计算扇形点---start*/
+         let points = [formatLonLat(position)];
+         let delta = optrange/6371/step;
+
+         let stepazi = 1;
+
+         let lat1 = position[1]*Math.PI/180;
+         let lng1 = position[0]*Math.PI/180;
+
+         let steps = parseInt(lobewith/1);
+         for(let i=0;i<=steps;i++){
+           let azitemp = (azimuth+stepazi*i)*Math.PI/180;
+           let lat = Math.asin(Math.sin(lat1)*Math.cos(delta)+Math.cos(lat1)*Math.sin(delta)*Math.cos(azitemp));
+           let lng = lng1+Math.atan2(Math.sin(azitemp)*Math.sin(delta)*Math.cos(lat1),Math.cos(delta)-Math.sin(lat1)*Math.sin(lat));
+           points.push(formatLonLat([lng*180/Math.PI,lat*180/Math.PI]))
+         }
+         points.push(formatLonLat(position));
+         return points
+        /*计算扇形点---end*/
+      }
+
+      var vectorSource= new ol.source.Vector({
+          wrapX: false,
+          features: [ ]
+        });
+
+       var vectorLayer = new ol.layer.Vector({
+              source: vectorSource
+          });
+       var feature = new ol.Feature({
+          geometry: new ol.geom.Polygon([calc(5)])
+        });
+        vectorSource.addFeature(feature)
+
+       function flash(feature) {
+        let endstep = 5;
+
+        var listenerKey;
+        function animate(event) {
+          endstep--;
+          var frameState = event.frameState;
+          var flashGeom = feature.getGeometry();
+          let nodes = calc(endstep);
+          flashGeom.setCoordinates([nodes])
+
+          if (endstep < 1) {
+            ol.Observable.unByKey(listenerKey);//移除监听事件
+            return ;
+          }
+          map.render();
+        }
+
+        listenerKey = map.on('postcompose', animate);
+      }
+
+      map.addLayer(vectorLayer);
+      //初始化动画
+      flash(feature);
     }
   }
   return objInstance;
